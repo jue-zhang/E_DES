@@ -284,6 +284,23 @@ double E_DES::TwoHourGlucose(double foodIntake, double bodyMass, double Gpl_init
     return glucoses[1];
 }
 
+std::vector<double> E_DES::FourHourGlucose(double foodIntake, double bodyMass, double Gpl_init_input, double Ipl_init_input){
+    ClearPreRuns();
+    std::vector<double> inputParams = {foodIntake, bodyMass};
+    SetInputParams(inputParams);
+    std::vector<double> initialConditions = {0., Gpl_init_input, Ipl_init_input, 0., 0.};
+    SetInitConditions(initialConditions);
+    SetCheckPts(0, 240., 24);
+    Solver_gsl();
+    std::vector<double> ret;
+    for (auto iter = glucoses.begin() + 1; iter != glucoses.end(); ++iter) { // skip glucoses[0] (initial value)
+        if (*iter < Gpl_init_input) ret.push_back(Gpl_init_input);
+        else ret.push_back(*iter);
+    }
+    return ret;
+}
+
+
 void E_DES::SetDataForParameterEstimation(const std::vector<std::string> &dpe_glucose_files,
                                           const std::vector<std::string> &dpe_insulin_files){
     
