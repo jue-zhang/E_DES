@@ -11,26 +11,39 @@
 // input params
 double E_DES::Dmeal = 75E3;
 double E_DES::Mb = 75.;
+
 // fitted params
+////      healthy person (original)
+//double E_DES::k1 = 1.45E-2;
+//double E_DES::k2 = 2.76E-1;
+//double E_DES::k3 = 6.07E-3;
+//double E_DES::k4 = 2.35E-4;
+//double E_DES::k5 = 9.49E-2;
+//double E_DES::k6 = 1.93E-1;
+//double E_DES::k7 = 1.15;
+//double E_DES::k8 = 7.27;
+//double E_DES::k9 = 0.;         // short-acting insulin
+//double E_DES::k10 = 0.;        // short-acting insulin
+//double E_DES::k11 = 3.83E-2;
+//double E_DES::k12 = 2.84E-1;
+//double E_DES::sigma = 1.34;
+//double E_DES::KM = 13.0995;
+////      healthy person (tweaked)
 double E_DES::k1 = 1.45E-2;
 double E_DES::k2 = 2.76E-1;
-//double E_DES::k3 = 6.07E-3;
 double E_DES::k3 = 0.015; // tweaked params
 double E_DES::k4 = 2.35E-4;
-//double E_DES::k5 = 9.49E-2;
 double E_DES::k5 = 0.06; // tweaked params
-//double E_DES::k6 = 1.93E-1;
 double E_DES::k6 = 1.; // tweaked params
-//double E_DES::k7 = 1.15;
 double E_DES::k7 = 0.5; // tweaked params
 double E_DES::k8 = 7.27;
 double E_DES::k9 = 0.;         // short-acting insulin
 double E_DES::k10 = 0.;        // short-acting insulin
-//double E_DES::k11 = 3.83E-2;
 double E_DES::k11 = 0.05; // tweaked params
 double E_DES::k12 = 2.84E-1;
 double E_DES::sigma = 1.34;
 double E_DES::KM = 13.0995;
+
 // const params
 double E_DES::gbliv = 0.043;
 double E_DES::Gthpl = 9.;
@@ -42,6 +55,7 @@ double E_DES::tau_i = 31.;
 double E_DES::t_int = 30.;
 double E_DES::tau_d = 3.;
 double E_DES::c1 = 0.1;
+
 // initial_conditions
 double E_DES::MGgut_init= 0.;  // mg
 double E_DES::Gpl_init = 5.;   // mmol/L
@@ -170,6 +184,79 @@ int E_DES::gsl_ODEs (double t, const double y[], double f[], void *paramsP){
     
     return GSL_SUCCESS;
 }
+
+// Set the subject type and the corresponding fitted parameters
+// Type of subject: 0 - healthy person, 1 - Type-I diabetes, 2 - Type-II diabetes
+void E_DES::SetSubjectTypeFittedParams(const int &type){
+    switch (type) {
+        case 0: // healthy person
+            k1 = 1.45E-2;
+            k2 = 2.76E-1;
+            k3 = 0.015; // tweaked params
+            k4 = 2.35E-4;
+            k5 = 0.06; // tweaked params
+            k6 = 1.; // tweaked params
+            k7 = 0.5; // tweaked params
+            k8 = 7.27;
+            k9 = 0.;         // short-acting insulin
+            k10 = 0.;        // short-acting insulin
+            k11 = 0.05; // tweaked params
+            k12 = 2.84E-1;
+            sigma = 1.34;
+            KM = 13.0995;
+            break;
+        case 1: // type-I (Note: now it is the same as type-II)
+            k1 = 1.45E-2;
+            k2 = 2.76E-1;
+            k3 = 0.005; // tweaked params
+            k4 = 2.35E-4;
+            k5 = 0.01; // tweaked params
+            k6 = 0.4; // tweaked params
+            k7 = 0.3; // tweaked params
+            k8 = 2.;
+            k9 = 0.;         // short-acting insulin
+            k10 = 0.;        // short-acting insulin
+            k11 = 0.05; // tweaked params
+            k12 = 2.84E-1;
+            sigma = 1.34;
+            KM = 16.65; // tweaked params
+            break;
+        case 2: // type-II
+            k1 = 1.45E-2;
+            k2 = 2.76E-1;
+            k3 = 0.005; // tweaked params
+            k4 = 2.35E-4;
+            k5 = 0.01; // tweaked params
+            k6 = 0.4; // tweaked params
+            k7 = 0.3; // tweaked params
+            k8 = 2.;
+            k9 = 0.;         // short-acting insulin
+            k10 = 0.;        // short-acting insulin
+            k11 = 0.05; // tweaked params
+            k12 = 2.84E-1;
+            sigma = 1.34;
+            KM = 16.65; // tweaked params
+            break;
+        default:// healthy person
+            std::cout << "ERROR(E_DES::SetObjectTypeFittedParams): invalid input of subject type! Using the healthy person instead!" << std::endl;
+            k1 = 1.45E-2;
+            k2 = 2.76E-1;
+            k3 = 0.015; // tweaked params
+            k4 = 2.35E-4;
+            k5 = 0.06; // tweaked params
+            k6 = 1.; // tweaked params
+            k7 = 0.5; // tweaked params
+            k8 = 7.27;
+            k9 = 0.;         // short-acting insulin
+            k10 = 0.;        // short-acting insulin
+            k11 = 0.05; // tweaked params
+            k12 = 2.84E-1;
+            sigma = 1.34;
+            KM = 13.0995;
+            break;
+    }
+}
+
 
 void E_DES::ClearPreRuns(){
     check_pts.clear();
@@ -443,6 +530,3 @@ void E_DES::SetDataForParameterEstimation(const std::vector<std::string> &dpe_gl
 //    nested::run(IS, mmodal, ceff, nlive, tol, efr, ndims, nPar, nClsPar, maxModes, updInt, Ztol, root, seed, pWrap, fb, resume, outfile, initMPI, logZero, maxiter, MultiNest_LogLike, MultiNest_Dumper, context);
 //
 //}
-
-
-
