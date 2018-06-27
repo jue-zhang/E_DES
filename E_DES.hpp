@@ -39,6 +39,10 @@ public:
     std::vector<double> GetCheckPts() {return check_pts;};
     std::vector<double> GetInitConditions() ;
     
+    // Set the subject type and the corresponding fitted parameters
+    //      Type of subject: 0 - healthy person, 1 - Type-I diabetes, 2 - Type-II diabetes
+    void SetSubjectTypeFittedParams(const int &type);
+    
     // clear the results from the previous run
     void ClearPreRuns();
     
@@ -77,6 +81,8 @@ private:
 //    static void MultiNest_Dumper(int &nSamples, int &nlive, int &nPar, double **physLive, double **posterior, double **paramConstr, double &maxLogLike, double &logZ, double &INSlogZ, double &logZerr, void *context) {}
     
 private:
+    // type of subject: 0 - healthy person, 1 - Type-I diabetes, 2 - Type-II diabetes
+    static int type;
     // input params: Dmeal -- amount of food intake (mg); Mb -- body mass (Kg)
     static double Dmeal, Mb;
     // fitted params: params that are to be obtained through fitting
