@@ -79,6 +79,15 @@ public:
     //      output: the glucose levels in eight hours (10 min intervals), in unit of 'mmol/L'
     std::vector<double> EightHourGlucose(double foodIntake, double bodyMass, double Gpl_init_input, double Ipl_init_input);
     
+
+    // Obtain the glucose levels in eight hours after food intake every minute
+    //      input: foodIntake -- the amount of intaked food, in unit of 'mg'
+    //      bodyMass -- the body mass, in unit of 'kg'
+    //      Gpl_init_input -- the initial glucose in the plasma before eating, in unit of 'mmol/L'; ref. value = 5 mmol/L
+    //      Ipl_init_input -- the initial insulin in the plasma before eating, in unit of 'mU/L'; ref. value = 8 mU/L
+    //      output: the glucose levels in eight hours (10 min intervals), in unit of 'mmol/L'
+    std::vector<double> EightHourGlucosePerMin(double foodIntake, double bodyMass, double Gpl_init_input, double Ipl_init_input);
+
     // Obtain the glucose levels in 10-min intervals under a set of consective food intake events
     //      input:
     //          bodyMass -- the body mass, in unit of 'kg'
@@ -93,6 +102,7 @@ public:
     //                              non-zero food intake event.
     //      output: the glucose levels at the time instants that are integers of 10's, in the form of <time, glucose>
     std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, std::vector<std::pair<double, double>> foodIntakeEvents);
+
     
     
     
