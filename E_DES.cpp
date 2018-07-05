@@ -447,6 +447,23 @@ std::vector<double> E_DES::EightHourGlucose(double foodIntake, double bodyMass, 
     return ret;
 }
 
+std::vector<double> E_DES::EightHourGlucosePerMin(double foodIntake, double bodyMass, double Gpl_init_input, double Ipl_init_input){
+    ClearPreRuns();
+    std::vector<double> inputParams = {foodIntake, bodyMass};
+    SetInputParams(inputParams);
+    std::vector<double> initialConditions = {0., Gpl_init_input, Ipl_init_input, 0., 0.};
+    SetInitConditions(initialConditions);
+    SetCheckPts(0, 480., 480);
+    Solver_gsl();
+    std::vector<double> ret;
+    for (auto iter = glucoses.begin() + 1; iter != glucoses.end(); ++iter) { // skip glucoses[0] (initial value)
+        ret.push_back(*iter);
+//        if (*iter < Gpl_init_input) ret.push_back(Gpl_init_input);
+//        else ret.push_back(*iter);
+    }
+    return ret;
+}
+
 
 std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, std::vector<std::pair<double, double>> foodIntakeEvents){
     // check if there are at least two elements in 'foodIntakeEvents', one for the initial time, and the last one for
