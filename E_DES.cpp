@@ -688,21 +688,21 @@ double E_DES::k12_D1 = 0.0191808;
 double E_DES::sigma_D1 = 1.52822;
 double E_DES::KM_D1 = 18.937;
 
-//// pre-setted fitted-params: D2
-//double E_DES::k1_D2 = 0.0171219;
-//double E_DES::k2_D2 = 0.0682668;
-//double E_DES::k3_D2 = 0.00374951;
-//double E_DES::k4_D2 = 0.000510048;
-//double E_DES::k5_D2 = 0.211746;
-//double E_DES::k6_D2 = 0.0187956;
-//double E_DES::k7_D2 = 0.172134;
-//double E_DES::k8_D2 = 2.40894;
-//double E_DES::k9_D2 = 0.;         // short-acting insulin
-//double E_DES::k10_D2 = 0.;       // short-acting insulin
-//double E_DES::k11_D2 = 0.000422715;
-//double E_DES::k12_D2 = 0.0191808;
-//double E_DES::sigma_D2 = 1.52822;
-//double E_DES::KM_D2 = 18.937;
+// pre-setted fitted-params: D2
+double E_DES::k1_D2 = 0.0171219;
+double E_DES::k2_D2 = 0.0682668;
+double E_DES::k3_D2 = 0.00374951;
+double E_DES::k4_D2 = 0.000510048;
+double E_DES::k5_D2 = 0.211746;
+double E_DES::k6_D2 = 0.0187956;
+double E_DES::k7_D2 = 0.172134;
+double E_DES::k8_D2 = 2.40894;
+double E_DES::k9_D2 = 0.;         // short-acting insulin
+double E_DES::k10_D2 = 0.;       // short-acting insulin
+double E_DES::k11_D2 = 0.000422715;
+double E_DES::k12_D2 = 0.0191808;
+double E_DES::sigma_D2 = 1.52822;
+double E_DES::KM_D2 = 18.937;
 
 //// fitted-params for healthy person in original E_DES paper http://journals.sagepub.com/doi/abs/10.1177/1932296814562607
 //double E_DES::k1_H = 1.45E-2;
@@ -736,21 +736,21 @@ double E_DES::KM_D1 = 18.937;
 //double E_DES::sigma_H = 1.34;
 //double E_DES::KM_H = 13.0995;
 
-// Manually tweaked fitted-params for D2, comparing with those in original E_DES paper (7/1/2018)
-double E_DES::k1_D2 = 1.45E-2;
-double E_DES::k2_D2 = 2.76E-1;
-double E_DES::k3_D2 = 0.005; // tweaked params
-double E_DES::k4_D2 = 2.35E-4;
-double E_DES::k5_D2 = 0.01; // tweaked params
-double E_DES::k6_D2 = 0.4; // tweaked params
-double E_DES::k7_D2 = 0.3; // tweaked params
-double E_DES::k8_D2 = 2.; // tweaked params
-double E_DES::k9_D2 = 0.;         // short-acting insulin
-double E_DES::k10_D2 = 0.;        // short-acting insulin
-double E_DES::k11_D2 = 0.05; // tweaked params
-double E_DES::k12_D2 = 2.84E-1;
-double E_DES::sigma_D2 = 1.34;
-double E_DES::KM_D2 = 16.65; // tweaked params
+//// Manually tweaked fitted-params for D2, comparing with those in original E_DES paper (7/1/2018)
+//double E_DES::k1_D2 = 1.45E-2;
+//double E_DES::k2_D2 = 2.76E-1;
+//double E_DES::k3_D2 = 0.005; // tweaked params
+//double E_DES::k4_D2 = 2.35E-4;
+//double E_DES::k5_D2 = 0.01; // tweaked params
+//double E_DES::k6_D2 = 0.4; // tweaked params
+//double E_DES::k7_D2 = 0.3; // tweaked params
+//double E_DES::k8_D2 = 2.; // tweaked params
+//double E_DES::k9_D2 = 0.;         // short-acting insulin
+//double E_DES::k10_D2 = 0.;        // short-acting insulin
+//double E_DES::k11_D2 = 0.05; // tweaked params
+//double E_DES::k12_D2 = 2.84E-1;
+//double E_DES::sigma_D2 = 1.34;
+//double E_DES::KM_D2 = 16.65; // tweaked params
 
 // input params
 double E_DES::Dmeal = 75E3;
