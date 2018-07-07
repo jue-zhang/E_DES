@@ -46,10 +46,14 @@ int main(int argc, const char * argv[]) {
     eDES.SetSubjectTypeFittedParams(2);
     
     std::vector<std::pair<double, double>> glucose_at_10_mins;
+    ofstream output;
+    string output_file_path = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/";
+    output.open(output_file_path + "output.dat", ofstream::out);
     glucose_at_10_mins = eDES.GlucoseUnderFoodIntakeEvents(bodyMass, Gpl_init, Ipl_init, foodIntakeEvents);
     
     for (auto glucose_at_10_min: glucose_at_10_mins) {
         cout << glucose_at_10_min.first / 60 << " " << glucose_at_10_min.second << endl;
+        output << glucose_at_10_min.first / 60 << " " << glucose_at_10_min.second << endl;
     }
     
     return 0;
