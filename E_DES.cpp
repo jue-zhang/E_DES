@@ -283,6 +283,23 @@ void E_DES::LoadFittedParams(std::ifstream &param_file){
     }
 }
 
+void E_DES::SetFittedParamsEDES(){
+    k1 = 1.45E-2;
+    k2 = 2.76E-1;
+    k3 = 6.07E-3;
+    k4 = 2.35E-4;
+    k5 = 9.49E-2;
+    k6 = 1.93E-1;
+    k7 = 1.15;
+    k8 = 7.27;
+    k9 = 0.;         // short-acting insulin
+    k10 = 0.;        // short-acting insulin
+    k11 = 3.83E-2;
+    k12 = 2.84E-1;
+    sigma = 1.34;
+    KM = 13.0995;
+}
+
 std::vector<double> E_DES::GetInputParams() {
     std::vector<double> inputParams = {Dmeal, Mb};
     return inputParams;
@@ -490,7 +507,8 @@ void E_DES::SetDataForParameterEstimation(const std::vector<std::string> &dpe_gl
 }
 
 
-void E_DES::EstimateFittedParameters_gsl(){ // ref. of using GSL: https://www.gnu.org/software/gsl/doc/html/multimin.html
+void E_DES::EstimateFittedParameters_gsl(){
+    // ref. of using GSL: https://www.gnu.org/software/gsl/doc/html/multimin.html
     
     // set up the initial point and initial step size
     minParams_init = {k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, sigma, KM};
@@ -505,8 +523,8 @@ void E_DES::EstimateFittedParameters_gsl(){ // ref. of using GSL: https://www.gn
         log10_min_params_range.push_back( {tmp-interval, tmp+interval} );
     }
     // special treatment on some parameters
-    log10_min_params_range[0] = { log10(0.5*k1), log10(2.*k1) }; // k1
-    log10_min_params_range[1] = { log10(0.5*k2), log10(2.*k2) }; // k2
+    log10_min_params_range[0] = { log10(0.005), log10(0.035) }; // k1: [0.005, 0.035]
+    log10_min_params_range[1] = { log10(0.05), log10(0.8) }; // k2: [0.05, 0.8]
     log10_min_params_range[8] = {log10(0.99*1E-10), log10(1E-10)}; // k9
     log10_min_params_range[9] = {log10(0.99*1E-10), log10(1E-10)}; // k10
     log10_min_params_range[12] = {log10(1.), log10(2.)}; // sigma
@@ -533,7 +551,7 @@ void E_DES::EstimateFittedParameters_gsl(){ // ref. of using GSL: https://www.gn
         double SD_tmp = (log10_min_params_range[i].second - log10_min_params_range[i].first) / 2.;
         SS.push_back( SS_tmp );
         SD.push_back( SD_tmp );
-        double x = SS_tmp;
+        double x = SS_tmp; // centering the initial values of y at 0 (min_param = mid-point)
         double y = atanh( (x - SS_tmp) / SD_tmp );
         gsl_vector_set (min_params, i, y);
         gsl_vector_set (initial_step_size, i, 0.01);
@@ -656,21 +674,21 @@ double E_DES::gsl_min_fitted_params_SSR_func (const gsl_vector *v, void *params)
 // subject type
 int E_DES::type = 0;
 
-// pre-setted fitted-params: healthy person
-double E_DES::k1_H = 0.0183626;
-double E_DES::k2_H = 0.0937043;
-double E_DES::k3_H = 0.00428242;
-double E_DES::k4_H = 0.000218343;
-double E_DES::k5_H = 0.357796;
-double E_DES::k6_H = 0.0577189;
-double E_DES::k7_H = 0.248337;
-double E_DES::k8_H = 6.70016;
-double E_DES::k9_H = 0.;         // short-acting insulin
-double E_DES::k10_H = 0.;        // short-acting insulin
-double E_DES::k11_H = 0.013054;
-double E_DES::k12_H = 0.669478;
-double E_DES::sigma_H = 1.42996;
-double E_DES::KM_H = 14.7465;
+//// pre-setted fitted-params: healthy person
+//double E_DES::k1_H = 0.0183626;
+//double E_DES::k2_H = 0.0937043;
+//double E_DES::k3_H = 0.00428242;
+//double E_DES::k4_H = 0.000218343;
+//double E_DES::k5_H = 0.357796;
+//double E_DES::k6_H = 0.0577189;
+//double E_DES::k7_H = 0.248337;
+//double E_DES::k8_H = 6.70016;
+//double E_DES::k9_H = 0.;         // short-acting insulin
+//double E_DES::k10_H = 0.;        // short-acting insulin
+//double E_DES::k11_H = 0.013054;
+//double E_DES::k12_H = 0.669478;
+//double E_DES::sigma_H = 1.42996;
+//double E_DES::KM_H = 14.7465;
 
 // pre-setted fitted-params: D1 (currently, same as D2)
 double E_DES::k1_D1 = 0.0171219;
@@ -720,21 +738,21 @@ double E_DES::KM_D2 = 18.937;
 //double E_DES::sigma_H = 1.34;
 //double E_DES::KM_H = 13.0995;
 
-//// Manually tweaked fitted-params for healty person, comparing with those in original E_DES paper (6/25/2018)
-//double E_DES::k1_H = 1.45E-2;
-//double E_DES::k2_H = 2.76E-1;
-//double E_DES::k3_H = 0.015; // tweaked params
-//double E_DES::k4_H = 2.35E-4;
-//double E_DES::k5_H = 0.06; // tweaked params
-//double E_DES::k6_H = 1.; // tweaked params
-//double E_DES::k7_H = 0.5; // tweaked params
-//double E_DES::k8_H = 7.27;
-//double E_DES::k9_H = 0.;         // short-acting insulin
-//double E_DES::k10_H = 0.;        // short-acting insulin
-//double E_DES::k11_H = 0.05; // tweaked params
-//double E_DES::k12_H = 2.84E-1;
-//double E_DES::sigma_H = 1.34;
-//double E_DES::KM_H = 13.0995;
+// Manually tweaked fitted-params for healty person, comparing with those in original E_DES paper (6/25/2018)
+double E_DES::k1_H = 1.45E-2;
+double E_DES::k2_H = 2.76E-1;
+double E_DES::k3_H = 0.015; // tweaked params
+double E_DES::k4_H = 2.35E-4;
+double E_DES::k5_H = 0.06; // tweaked params
+double E_DES::k6_H = 1.; // tweaked params
+double E_DES::k7_H = 0.5; // tweaked params
+double E_DES::k8_H = 7.27;
+double E_DES::k9_H = 0.;         // short-acting insulin
+double E_DES::k10_H = 0.;        // short-acting insulin
+double E_DES::k11_H = 0.05; // tweaked params
+double E_DES::k12_H = 2.84E-1;
+double E_DES::sigma_H = 1.34;
+double E_DES::KM_H = 13.0995;
 
 //// Manually tweaked fitted-params for D2, comparing with those in original E_DES paper (7/1/2018)
 //double E_DES::k1_D2 = 1.45E-2;

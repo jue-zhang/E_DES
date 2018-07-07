@@ -104,6 +104,8 @@ public:
     void SetSubjectTypeFittedParams(const int &type); // use pre-seted fitted-params
     // Load the optimized fitted-params
     void LoadFittedParams(std::ifstream &param_file);
+    // Set fitted-params as those in Table 1 in the E_DES paper
+    void SetFittedParamsEDES();
     
     // -------------  Extracting model paramers
     
