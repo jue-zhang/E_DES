@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
         cout << glucose_at_10_min.first / 60 << " " << glucose_at_10_min.second << endl;
         output << glucose_at_10_min.first / 60 << " " << glucose_at_10_min.second << endl;
     }
-    
+
     return 0;
 }
 
