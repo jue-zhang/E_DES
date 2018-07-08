@@ -90,8 +90,9 @@ public:
     //              and 'intensity' is the level of the intensity of the exercise.
     // Output:
     //      the glucose levels, in the form of <time, glucose>, in the user-specified intervals,
-    //      e.g., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ...}. Note: the last time instant may NOT be the last
-    //      time instant in 'foodIntakeEvents', as that time instant may not be zero under the modulus of 'timeInterval'
+    //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ... }.
+    //      Note: The last time instant in the output may NOT be the last time instant in 'foodIntakeEvents'
+    //              or 'exerciseEvents', as they may not be zero under the modulus of 'timeInterval'.
     std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeExerciseEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, const std::vector<std::pair<double, double>> &foodIntakeEvents, const std::vector<std::tuple<double, double, double>> &exerciseEvents, double timeInterval);
     
 

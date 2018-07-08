@@ -55,13 +55,13 @@ int main(int argc, const char * argv[]) {
     
     // obtain glucoses in the user-specified time intervals
     std::vector<std::pair<double, double>> glucoses;
-    double timeInterval = 5.; // user-specified time intervals in the output
+    double timeInterval = 10.; // user-specified time intervals in the output
     ofstream output;
     string output_file_path = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/";
     output.open(output_file_path + "output.dat", ofstream::out);
     glucoses = eDES.GlucoseUnderFoodIntakeExerciseEvents(bodyMass, Gpl_init, Ipl_init,
                                                          foodIntakeEvents, exerciseEvents, timeInterval);
-    
+ 
     for (auto glucose: glucoses) {
         cout << glucose.first   << " " << glucose.second << endl;
         output << glucose.first << " " << glucose.second << endl;
