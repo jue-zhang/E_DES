@@ -71,21 +71,6 @@ public:
     //      the glucose levels in eight hours (per min), in unit of 'mmol/L'
     std::vector<double> EightHourGlucosePerMin(double foodIntake, double bodyMass, double Gpl_init_input, double Ipl_init_input);
     
-    // Method:
-    //      Obtain the glucose levels in 10-min intervals under a set of consective food intake events
-    // Input:
-    //      bodyMass -- the body mass, in unit of 'kg'
-    //      Gpl_init_input -- the initial glucose in the plasma before eating, in unit of 'mmol/L'; ref. value = 5 mmol/L
-    //      Ipl_init_input -- the initial insulin in the plasma before eating, in unit of 'mU/L'; ref. value = 8 mU/L
-    //      foodIntakeEvents -- a list of food intake events in the form of <time, foodIntake>, where "time" is the food intake
-    //              time instant, and 'foodIntake' is the amount of intaked food, in unit of 'mg'. The first element of
-    //              'foodIntakeEvents' is the initial time, i.e., foodIntakeEvents[0] = {t_init, initial_food_intake},
-    //              while the last element is the final time instant. Note: If we want results at 8h after the final food intake,
-    //              we should set the last element in 'foodIntakeEvents' as {tF + 8*60, 0.}, where 'tF' is the time instant
-    //              of the final NON-ZERO food intake event.
-    // Output:
-    //      the glucose levels at the time instants that are integers of 10's, in the form of <time, glucose>
-    std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, std::vector<std::pair<double, double>> foodIntakeEvents);
     
     // Method:
     //      Obtain the glucose levels in the user-specified intervals under a set of consective food intake and excercise events
@@ -104,7 +89,10 @@ public:
     //              where 't_start' ('t_finish') is the time instant when the exercise starts (finishes),
     //              and 'intensity' is the level of the intensity of the exercise.
     // Output:
-    //      the glucose levels in the user-specified intervals, in the form of <time, glucose>
+    //      the glucose levels, in the form of <time, glucose>, in the user-specified intervals,
+    //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ... }.
+    //      Note: The last time instant in the output may NOT be the last time instant in 'foodIntakeEvents'
+    //              or 'exerciseEvents', as they may not be zero under the modulus of 'timeInterval'.
     std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeExerciseEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, const std::vector<std::pair<double, double>> &foodIntakeEvents, const std::vector<std::tuple<double, double, double>> &exerciseEvents, double timeInterval);
     
 
