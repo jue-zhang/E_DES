@@ -73,50 +73,6 @@ std::vector<double> E_DES::EightHourGlucosePerMin(double foodIntake, double body
     return ret;
 }
 
-std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, std::vector<std::pair<double, double>> foodIntakeEvents){
-    // check if there are at least two elements in 'foodIntakeEvents', one for the initial time, and the last one for
-    //  the final time corresponding to the time that is 8 hours after the final non-zero food intake.
-    if (foodIntakeEvents.size() < 2) {
-        std::cout << "ERROR(E_DES::GlucoseUnderFoodIntakeEvents): the input size of 'foodIntakeEvents' must be larger than 1" << std::endl;
-    }
-    std::vector<double> initialConditions = {foodIntakeEvents[0].first, 0., Gpl_init_input, Ipl_init_input, 0., 0.};
-    SetInitConditions(initialConditions);
-    std::vector<std::pair<double, double>> ret;
-    for (auto event = foodIntakeEvents.begin(); event != foodIntakeEvents.end() - 1; ++event) {
-        // set initial conditions of the current evolution as the evolved parameters from the last evolution
-        ClearPreRuns();
-        double foodIntake_tmp = event->second;
-        std::vector<double> inputParams_tmp = {foodIntake_tmp, bodyMass};
-        SetInputParams(inputParams_tmp);
-        std::vector<double> initialConditions_tmp = GetCurrentEvolvedParams();
-        SetInitConditions(initialConditions_tmp);
-        // set check_pts in the current evolution
-        double tI_tmp = t_curr;
-        double tF_tmp = (event+1)->first; // the time instant of the next food intake event
-        time_offset = tI_tmp; // set time_offset
-        std::vector<double> check_pts_tmp;
-        // careful treatment when 'tI_tmp' and 'tF_tmp' are not integers of 10's
-        double tI_tmp_10 = floor(tI_tmp/10.) * 10.;
-        if ( fabs(tI_tmp - tI_tmp_10) > 1E-5 ) // manually include tI_tmp if it is not 10's
-            check_pts_tmp.push_back(tI_tmp - time_offset);
-        double tF_tmp_10 = floor(tF_tmp/10.) * 10.;
-        int steps_tmp = static_cast<int>( (tF_tmp_10 - tI_tmp_10) / 10.);
-        for (int i = 0; i <= steps_tmp; ++i) check_pts_tmp.push_back(tI_tmp_10 + i * 10. - time_offset);
-        if ( fabs(tF_tmp - tF_tmp_10) > 1E-5 ) // manually include tF_tmp if it is not 10's
-            check_pts_tmp.push_back(tF_tmp - time_offset);
-        SetCheckPts(check_pts_tmp);
-        // evolve
-        Solver_gsl();
-        // export the glucose levels at the time instants that are multiple of 10's
-        for (std::size_t i = 0; i < time_instants.size(); ++i) {
-            double time_res = fmod(time_instants[i], 10.);
-            if ( fabs(time_res) < 1E-5 ) ret.push_back({time_instants[i], glucoses[i]});
-        }
-    }
-    return ret;
-}
-
-
 std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeExerciseEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, const std::vector<std::pair<double, double>> &foodIntakeEvents, const std::vector<std::tuple<double, double, double>> &exerciseEvents, double timeInterval){
     // check if there are at least two elements in 'foodIntakeEvents', one for the initial time, and the last one for
     //  the final time corresponding to the time that is 8 hours after the final non-zero food intake.
