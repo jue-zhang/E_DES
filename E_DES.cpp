@@ -116,6 +116,57 @@ std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeEvents(doubl
     return ret;
 }
 
+
+std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeExerciseEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, const std::vector<std::pair<double, double>> &foodIntakeEvents, const std::vector<std::tuple<double, double, double>> &exerciseEvents, double timeInterval){
+    // check if there are at least two elements in 'foodIntakeEvents', one for the initial time, and the last one for
+    //  the final time corresponding to the time that is 8 hours after the final non-zero food intake.
+    if (foodIntakeEvents.size() < 2) {
+        std::cout << "ERROR(E_DES::GlucoseUnderFoodIntakeEvents): the input size of 'foodIntakeEvents' must be larger than 1" << std::endl;
+    }
+    std::vector<double> initialConditions = {foodIntakeEvents[0].first, 0., Gpl_init_input, Ipl_init_input, 0., 0.};
+    SetInitConditions(initialConditions);
+    std::vector<std::pair<double, double>> ret;
+    double t_init = foodIntakeEvents[0].first; // the first time instant
+    for (auto event = foodIntakeEvents.begin(); event != foodIntakeEvents.end() - 1; ++event) {
+        // set initial conditions of the current evolution as the evolved parameters from the last evolution
+        ClearPreRuns();
+        double foodIntake_tmp = event->second;
+        std::vector<double> inputParams_tmp = {foodIntake_tmp, bodyMass};
+        SetInputParams(inputParams_tmp);
+        std::vector<double> initialConditions_tmp = GetCurrentEvolvedParams();
+        SetInitConditions(initialConditions_tmp);
+        // set check_pts in the current evolution
+        double tI_tmp = t_curr;
+        double tF_tmp = (event+1)->first; // the time instant of the next food intake event
+        time_offset = tI_tmp; // set time_offset
+        std::vector<double> check_pts_tmp;
+        // careful treatment when 'tI_tmp' and 'tF_tmp' are not integers of 'timeInterval'
+        check_pts_tmp.push_back(tI_tmp - time_offset);
+        double residual = fmod(tI_tmp - t_init, timeInterval);
+        double t_tmp = tI_tmp + (timeInterval - residual);
+        while (t_tmp < tF_tmp) {
+            check_pts_tmp.push_back(t_tmp - time_offset);
+            t_tmp += timeInterval;
+        }
+        check_pts_tmp.push_back(tF_tmp - time_offset);
+        SetCheckPts(check_pts_tmp);
+        // evolve
+        Solver_gsl();
+        // export the glucose levels at the time instants that are integers of 'timeInterval'
+        for (std::size_t i = 0; i < time_instants.size(); ++i) {
+            double time_res = fmod(time_instants[i] - t_init, timeInterval);
+            if ( fabs(time_res) < 1E-5 && i != (time_instants.size()-1) ) // not keep the 'tF' check pt to avoid double counting
+                ret.push_back({time_instants[i], glucoses[i]});
+        }
+        if (event == (foodIntakeEvents.end()-2)){// keep the 'tF' check pt when the 'event' is the last evolution
+            auto sz = time_instants.size();
+            double time_res = fmod(time_instants[sz-1] - t_init, timeInterval);
+            if ( fabs(time_res) < 1E-5 ) ret.push_back({time_instants[sz-1], glucoses[sz-1]});
+        }
+    }
+    return ret;
+}
+
 // ++++++++++++++++++++++++++++++   Methods for modifying/extracting model parameters  ++++++++++++++++++++++++++++++
 
 
