@@ -39,19 +39,34 @@ int main(int argc, const char * argv[]) {
         {23*60., 20E3},      // midnight snack, eg. 11 pm
         {31*60., 0}       // the next morning at 7 am
     };
+    std::vector<std::tuple<double, double, double>> exerciseEvents = {
+        {13.*60, 14.*60, 1.}    // exercise b/n 1pm and 2pm with 'intensity' = 1.
+    };
     
     // Set the subject type and fitted parameters
     // 1. Type of subject: 0 - healthy person, 1 - Type-I diabetes, 2 - Type-II diabetes
     // 2. Note: Type-I is NOT supported yet, and Type-II parameters are used instead.
     eDES.SetSubjectTypeFittedParams(2);
     
-    std::vector<std::pair<double, double>> glucose_at_10_mins;
-    glucose_at_10_mins = eDES.GlucoseUnderFoodIntakeEvents(bodyMass, Gpl_init, Ipl_init, foodIntakeEvents);
+//    // Load fitted-params-D2
+//    ifstream fitted_params_D2;
+//    fitted_params_D2.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_D2.dat", ofstream::in);
+//    eDES.LoadFittedParams(fitted_params_D2);
     
-    for (auto glucose_at_10_min: glucose_at_10_mins) {
-        cout << glucose_at_10_min.first / 60 << " " << glucose_at_10_min.second << endl;
+    // obtain glucoses in the user-specified time intervals
+    std::vector<std::pair<double, double>> glucoses;
+    double timeInterval = 5.; // user-specified time intervals in the output
+    ofstream output;
+    string output_file_path = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/";
+    output.open(output_file_path + "output.dat", ofstream::out);
+    glucoses = eDES.GlucoseUnderFoodIntakeExerciseEvents(bodyMass, Gpl_init, Ipl_init,
+                                                         foodIntakeEvents, exerciseEvents, timeInterval);
+    
+    for (auto glucose: glucoses) {
+        cout << glucose.first   << " " << glucose.second << endl;
+        output << glucose.first << " " << glucose.second << endl;
     }
-    
+
     return 0;
 }
 
