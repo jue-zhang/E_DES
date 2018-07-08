@@ -73,7 +73,6 @@ std::vector<double> E_DES::EightHourGlucosePerMin(double foodIntake, double body
     return ret;
 }
 
-
 std::vector<std::pair<double, double>> E_DES::GlucoseUnderFoodIntakeExerciseEvents(double bodyMass, double Gpl_init_input, double Ipl_init_input, const std::vector<std::pair<double, double>> &foodIntakeEvents, const std::vector<std::tuple<double, double, double>> &exerciseEvents, double timeInterval){
     // check if there are at least two elements in 'foodIntakeEvents', one for the initial time, and the last one for
     //  the final time corresponding to the time that is 8 hours after the final non-zero food intake.
