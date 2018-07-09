@@ -101,9 +101,9 @@ public:
 public:
     // -------------  Modifying model paramers
     
-    static void SetInputParams(const std::vector<double> &input_params);
-    static void SetFittedParams(const std::vector<double> &fitted_params);
-    static void SetInitConditions(const std::vector<double> &init_conditions);
+    void SetInputParams(const std::vector<double> &input_params);
+    void SetFittedParams(const std::vector<double> &fitted_params);
+    void SetInitConditions(const std::vector<double> &init_conditions);
     // Specifying the check pts (i.e., the time instants that one wants to inspect)
     void SetCheckPts(double tI, double tF, int steps); // tI -- initial time, tF -- final time, steps -- num of pts to be inspected
     void SetCheckPts(const std::vector<double> &check_pts_input); // directly specify the to-be-inspected time instants
@@ -121,7 +121,7 @@ public:
     std::vector<double> GetFittedParams() ;
     std::vector<double> GetConstParams() ;
     std::vector<double> GetCheckPts() {return check_pts;};
-    static std::vector<double> GetInitConditions() ;
+    std::vector<double> GetInitConditions() ;
     std::vector<double> GetCurrentEvolvedParams() ;
     std::vector<double> GetMinFittedParamsSSR() { return minParams_fval_curr;} // get minimized fitted-params + SSR_min
     std::vector<std::pair<double, double>> GetGlucoses(); // return the obtained glucoses at the specied time instants
@@ -130,9 +130,9 @@ public:
     // ++++++++++++++++++++++++++++++   Methods for evolution  ++++++++++++++++++++++++++++++
 public:
     // clear the results from the previous run
-    static void ClearPreRuns();
+    void ClearPreRuns();
     // solve the ODEs
-    static int Solver_gsl(); // store the results in 'glucoses' and 'insulins' internally
+    int Solver_gsl(); // store the results in 'glucoses' and 'insulins' internally
 private:
     // internal usage for using GSL to solve ODEs
     static int gsl_ODEs (double t, const double y[], double f[], void *paramsP);
@@ -163,12 +163,12 @@ public:
                                        const std::vector<std::vector<double>> &input_parameter_sets);
     
     // Estimate fitted-params
-    static void EstimateFittedParameters_gsl();
+    void EstimateFittedParameters_gsl();
     
 private:
     // internal usage for minimizing the fitted parameters
     static double gsl_min_fitted_params_SSR_func (const gsl_vector *v, void *params);
-    static double ComputeSSR(const std::vector<std::vector<double>> &param_est_data_set,
+    double ComputeSSR(const std::vector<std::vector<double>> &param_est_data_set,
                              const std::vector<double> &glucoses,
                              const std::vector<double> &insulins);
     
@@ -183,7 +183,7 @@ private:
     // ---------------  Subject type and the corresponding fitted parameters
     
     // type of subject: 0 - healthy person, 1 - Type-I diabetes, 2 - Type-II diabetes
-    static int type;
+    int type = 0.;
     // pre_setted fitted params
     static double k1_H, k2_H, k3_H, k4_H, k5_H, k6_H, k7_H, k8_H, k9_H, k10_H, k11_H, k12_H, sigma_H, KM_H; // healthy
     static double k1_D1, k2_D1, k3_D1, k4_D1, k5_D1, k6_D1, k7_D1, k8_D1, k9_D1, k10_D1, k11_D1, k12_D1, sigma_D1, KM_D1; // D1
@@ -192,42 +192,75 @@ private:
     // ---------------- Parameters necessary for evolution
     
     // input params: Dmeal -- amount of food intake (mg); Mb -- body mass (Kg)
-    static double Dmeal, Mb;
+    double Dmeal = 75E3;
+    double Mb = 75.;
+    
     // fitted params: params that are to be obtained through fitting
-    static double k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, sigma, KM;
+    double k1 = 0.0183626;
+    double k2 = 0.0937043;
+    double k3 = 0.00428242;
+    double k4 = 0.000218343;
+    double k5 = 0.357796;
+    double k6 = 0.0577189;
+    double k7 = 0.248337;
+    double k8 = 6.70016;
+    double k9 = 0.;         // short-acting insulin
+    double k10 = 0.;        // short-acting insulin
+    double k11 = 0.013054;
+    double k12 = 0.669478;
+    double sigma = 1.42996;
+    double KM = 14.7465;
+
     // constant params in the model
-    static double gbliv, Gthpl, vG, vI, beta, fC, tau_i, t_int, tau_d, c1;
+    double gbliv = 0.043;
+    double Gthpl = 9.;
+    double vG = 17/70.;
+    double vI = 13/70.;
+    double beta = 1.;
+    double fC = 1/180.16;
+    double tau_i = 31.;
+    double t_int = 30.;
+    double tau_d = 3.;
+    double c1 = 0.1;
+
     // initial_conditions: status before eating anything (Note: Jpl is the first order derivative of Ipl )
-    static double t_init, MGgut_init, Gpl_init, Ipl_init, Jpl_init, Iif_init;
+    double t_init = 0.;      // min
+    double MGgut_init= 0.;  // mg
+    double Gpl_init = 5.;   // mmol/L
+    double Ipl_init = 8.;   // U/L
+    double Jpl_init = 0.;   // mU/L/min
+    double Iif_init = 0.;   // mU/L
+
     // time_offset: the acutal time instant when one starts performing evolution. We need this b/c
     //              in the actual evolution the starting time instant must be 0!
-    static double time_offset;
+    double time_offset = 0.;
     
     // ---------------- Vars used for checking evolution
     
     // time instants that are to be checked (Note: the first check_pt is always the initial time instant, t = 0.)
-    static std::vector<double> check_pts;
+    std::vector<double> check_pts;
     // evolved parameters at the current time instant (updated after each evolution)
-    static double t_curr, MGgut_curr, Gpl_curr, Ipl_curr, Jpl_curr, Iif_curr;
+    double t_curr, MGgut_curr, Gpl_curr, Ipl_curr, Jpl_curr, Iif_curr;
     // output the obtained glucoses and insulins at the specified time instants in 'time_instants'
-    static std::vector<double> time_instants;
-    static std::vector<double> glucoses;
-    static std::vector<double> insulins;
+    std::vector<double> time_instants;
+    std::vector<double> glucoses;
+    std::vector<double> insulins;
     
     // ---------------- Vars used for estimating fitted-params
     
     // store the input parameters, <foodIntake, bodyMass>, for each data set
-    static std::vector<std::vector<double>> input_param_sets;
+    std::vector<std::vector<double>> input_param_sets;
     // store the correponding set of data points corresponding to each set of input parameters.
     //      format of each data set: data_set[i] = {t[i], glucose[i], glu_err[i], insulin[i], ins_err[i]}
     using data_set = std::vector<std::vector<double>>;
-    static std::vector<data_set> param_est_data_sets;
+    std::vector<data_set> param_est_data_sets;
     // initial values of the parameters to be minimized, NOT include the SSR_init
-    static std::vector<double> minParams_init;
+    std::vector<double> minParams_init;
     // current values of the parameters to be minimized, include the SSR_curr
-    static std::vector<double> minParams_fval_curr;
+    std::vector<double> minParams_fval_curr;
 
 };
+
 
 
 

@@ -354,7 +354,16 @@ int E_DES::Solver_gsl() {
     
     // -------- set-up the ODE solver
     const int para_nums = 5; // number of dynamic parames in ODEs
-    gsl_odeiv2_system ode_sys = {gsl_ODEs, nullptr, para_nums, nullptr}; // set the Jacobian to nullptr
+    
+    // -------- set-up initial conditions
+    double evol_var = check_pts[0];
+    double dynamic_vars[para_nums];
+    std::vector<double> init_conditions = GetInitConditions();
+    for(int i = 0; i < para_nums; ++i)
+        dynamic_vars[i] = init_conditions[i+1];
+    
+    // -------- pass the instance to the static gsl_ODEs function
+    gsl_odeiv2_system ode_sys = {gsl_ODEs, nullptr, para_nums, this}; // set the Jacobian to nullptr
     
     // -------- define the high-level wrapper, "driver", to solve ODEs
     // step function: gsl_odeiv2_step_rkf45
@@ -365,12 +374,6 @@ int E_DES::Solver_gsl() {
     double epsrel = 0.; // the desired relative error
     gsl_odeiv2_driver * ode_driver = gsl_odeiv2_driver_alloc_y_new(&ode_sys, gsl_odeiv2_step_rkf45, hstart, epsabs, epsrel);
     
-    // -------- set-up initial conditions
-    double evol_var = check_pts[0];
-    double dynamic_vars[para_nums];
-    std::vector<double> init_conditions = GetInitConditions();
-    for(int i = 0; i < para_nums; ++i)
-        dynamic_vars[i] = init_conditions[i+1];
     
     // -------- evolution; obtain results at the specified check_pts
     for (auto check_pt: check_pts){
@@ -403,7 +406,47 @@ int E_DES::Solver_gsl() {
 
 int E_DES::gsl_ODEs (double t, const double y[], double f[], void *paramsP){
     (void)(t); /* avoid unused parameter warning */
-
+    
+    // passing the necessary parameters
+    
+    auto eDES_p_tmp = static_cast<E_DES *>(paramsP);
+    auto inputParams_tmp = eDES_p_tmp->GetInputParams();
+    auto fittedParams_tmp = eDES_p_tmp->GetFittedParams();
+    auto constParams_tmp = eDES_p_tmp->GetConstParams();
+    auto initConditions_tmp = eDES_p_tmp->GetInitConditions();
+    
+    auto Dmeal  = inputParams_tmp[0];
+    auto Mb     = inputParams_tmp[1];
+    
+    auto k1     = fittedParams_tmp[0];
+    auto k2     = fittedParams_tmp[1];
+    auto k3     = fittedParams_tmp[2];
+    auto k4     = fittedParams_tmp[3];
+    auto k5     = fittedParams_tmp[4];
+    auto k6     = fittedParams_tmp[5];
+    auto k7     = fittedParams_tmp[6];
+    auto k8     = fittedParams_tmp[7];
+//    auto k9     = fittedParams_tmp[8];
+//    auto k10    = fittedParams_tmp[9];
+    auto k11    = fittedParams_tmp[10];
+    auto k12    = fittedParams_tmp[11];
+    auto sigma  = fittedParams_tmp[12];
+    auto KM     = fittedParams_tmp[13];
+    
+    auto Gpl_init = initConditions_tmp[2];
+    auto Ipl_init = initConditions_tmp[3];
+    
+    auto gbliv  = constParams_tmp[0];
+    auto Gthpl  = constParams_tmp[1];
+    auto vG     = constParams_tmp[2];
+//    auto vI     = constParams_tmp[3];
+    auto beta   = constParams_tmp[4];
+    auto fC     = constParams_tmp[5];
+    auto tau_i  = constParams_tmp[6];
+    auto t_int  = constParams_tmp[7];
+    auto tau_d  = constParams_tmp[8];
+    auto c1     = constParams_tmp[9];
+    
     double Gbpl = Gpl_init;
     double Ibpl = Ipl_init;
     
@@ -572,7 +615,8 @@ void E_DES::EstimateFittedParameters_gsl(){
     gsl_multimin_function min_func; // 'min_func' -- functions to be minimized over
     min_func.n = num_params;
     min_func.f = gsl_min_fitted_params_SSR_func;
-    std::pair<std::vector<double>, std::vector<double>> params_tmp = {SS, SD};
+    // prepare the params to be passed to 'gsl_min_fitted_params_SSR_func'
+    std::tuple<E_DES *, std::vector<double> *, std::vector<double> *> params_tmp = {this, &SS, &SD};
     min_func.params = &params_tmp;
     
     s = gsl_multimin_fminimizer_alloc (T, num_params);
@@ -641,35 +685,38 @@ double E_DES::ComputeSSR(const std::vector<std::vector<double>> &param_est_data_
 }
 
 
-double E_DES::gsl_min_fitted_params_SSR_func (const gsl_vector *v, void *params){
-    double SSR = 0.;
-    std::pair<std::vector<double>, std::vector<double>> * paramsP = static_cast<std::pair<std::vector<double>, std::vector<double>> *>(params);
-    std::vector<double> SS_tmp = paramsP->first;
-    std::vector<double> SD_tmp = paramsP->second;
+double E_DES::gsl_min_fitted_params_SSR_func (const gsl_vector *v, void *paramsP){
+    
+    // passing parameters
+    auto paramsP_tmp = static_cast<std::tuple<E_DES *, std::vector<double> *, std::vector<double> *> *>(paramsP);
+    auto this2 = std::get<0>(*paramsP_tmp);
+    auto SS_tmp = *std::get<1>(*paramsP_tmp);
+    auto SD_tmp = *std::get<2>(*paramsP_tmp);
     
     // assign values to the varied params
-    std::vector<double *> min_paramsP = {&k1, &k2, &k3, &k4, &k5, &k6, &k7, &k8, &k9, &k10, &k11, &k12, &sigma, &KM};
+    std::vector<double *> min_paramsP = {&(this2->k1), &(this2->k2), &(this2->k3), &(this2->k4), &(this2->k5), &(this2->k6), &(this2->k7), &(this2->k8), &(this2->k9), &(this2->k10), &(this2->k11), &(this2->k12), &(this2->sigma), &(this2->KM)};
     for (int i = 0; i < min_paramsP.size(); ++i) {
         *min_paramsP[i] = pow( 10, SS_tmp[i] + SD_tmp[i] * tanh( gsl_vector_get(v, i)) );
     }
     
-    for (int i = 0; i < input_param_sets.size(); ++i) {
-        ClearPreRuns();
+    double SSR = 0.;
+    for (int i = 0; i < (this2->input_param_sets).size(); ++i) {
+        this2->ClearPreRuns();
         // set up input_params for the current run
-        SetInputParams(input_param_sets[i]);
+        this2->SetInputParams((this2->input_param_sets)[i]);
         // prepare for evolution: set check_pts
-        for (auto param_est_data_set_row: param_est_data_sets[i]) {
-            check_pts.push_back(param_est_data_set_row[0]);
+        for (auto param_est_data_set_row: (this2->param_est_data_sets)[i]) {
+            (this2->check_pts).push_back(param_est_data_set_row[0]);
         }
         // set up initial conditions
-        double Gpl_init_tmp = param_est_data_sets[i][0][1];
-        double Ipl_init_tmp = param_est_data_sets[i][0][3];
-        std::vector<double> init_conditions = {check_pts[0], 0., Gpl_init_tmp, Ipl_init_tmp, 0., 0.};
-        SetInitConditions(init_conditions);
+        double Gpl_init_tmp = (this2->param_est_data_sets)[i][0][1];
+        double Ipl_init_tmp = (this2->param_est_data_sets)[i][0][3];
+        std::vector<double> init_conditions = {(this2->check_pts)[0], 0., Gpl_init_tmp, Ipl_init_tmp, 0., 0.};
+        (this2->SetInitConditions)(init_conditions);
         // evolve
-        Solver_gsl();
+        (this2->Solver_gsl)();
         // calculate SSR
-        SSR += ComputeSSR(param_est_data_sets[i], glucoses, insulins);
+        SSR += (this2->ComputeSSR)((this2->param_est_data_sets)[i], this2->glucoses, this2->insulins);
     }
     return SSR;
 }
@@ -677,9 +724,6 @@ double E_DES::gsl_min_fitted_params_SSR_func (const gsl_vector *v, void *params)
 
 
 // ++++++++++++++++++++++++++++++   Initialization of static memembers  ++++++++++++++++++++++++++++++
-
-// subject type
-int E_DES::type = 0;
 
 // pre-setted fitted-params: healthy person (optimized: 7/7/2018)
 double E_DES::k1_H = 0.015262;
@@ -776,66 +820,5 @@ double E_DES::KM_D2 = 23.9015;
 //double E_DES::k12_D2 = 2.84E-1;
 //double E_DES::sigma_D2 = 1.34;
 //double E_DES::KM_D2 = 16.65; // tweaked params
-
-// input params
-double E_DES::Dmeal = 75E3;
-double E_DES::Mb = 75.;
-
-// fitted-params: default healthy person
-double E_DES::k1 = 0.0183626;
-double E_DES::k2 = 0.0937043;
-double E_DES::k3 = 0.00428242;
-double E_DES::k4 = 0.000218343;
-double E_DES::k5 = 0.357796;
-double E_DES::k6 = 0.0577189;
-double E_DES::k7 = 0.248337;
-double E_DES::k8 = 6.70016;
-double E_DES::k9 = 0.;         // short-acting insulin
-double E_DES::k10 = 0.;        // short-acting insulin
-double E_DES::k11 = 0.013054;
-double E_DES::k12 = 0.669478;
-double E_DES::sigma = 1.42996;
-double E_DES::KM = 14.7465;
-
-// const params
-double E_DES::gbliv = 0.043;
-double E_DES::Gthpl = 9.;
-double E_DES::vG = 17/70.;
-double E_DES::vI = 13/70.;
-double E_DES::beta = 1.;
-double E_DES::fC = 1/180.16;
-double E_DES::tau_i = 31.;
-double E_DES::t_int = 30.;
-double E_DES::tau_d = 3.;
-double E_DES::c1 = 0.1;
-
-// time_offset
-double E_DES::time_offset = 0.;
-
-// initial_conditions
-double E_DES::t_init = 0.;      // min
-double E_DES::MGgut_init= 0.;  // mg
-double E_DES::Gpl_init = 5.;   // mmol/L
-double E_DES::Ipl_init = 8.;   // U/L
-double E_DES::Jpl_init = 0.;   // mU/L/min
-double E_DES::Iif_init = 0.;   // mU/L
-
-// evolved parameters at the current time instant
-double E_DES::t_curr = 0.;      // min
-double E_DES::MGgut_curr = 0.;  // mg
-double E_DES::Gpl_curr = 5.;   // mmol/L
-double E_DES::Ipl_curr = 8.;   // U/L
-double E_DES::Jpl_curr = 0.;   // mU/L/min
-double E_DES::Iif_curr = 0.;   // mU/L
-
-// default initialization for other parameters
-std::vector<double> E_DES::check_pts;
-std::vector<double> E_DES::glucoses;
-std::vector<double> E_DES::E_DES::insulins;
-std::vector<double> E_DES::time_instants;
-std::vector<E_DES::data_set> E_DES::param_est_data_sets;
-std::vector<std::vector<double>> E_DES::input_param_sets;
-std::vector<double> E_DES::minParams_init;
-std::vector<double> E_DES::minParams_fval_curr;
 
 

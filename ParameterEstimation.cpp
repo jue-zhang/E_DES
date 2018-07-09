@@ -81,7 +81,7 @@ int main(int argc, const char * argv[]) {
     
     vector<double> optimized_fitted_params = eDES.GetMinFittedParamsSSR();
     ofstream output;
-    output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_D2.dat",
+    output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_D2_test.dat",
                 ofstream::out);
     
     cout << "init_fitted_params\t\t\toptimized_params: " << endl;
