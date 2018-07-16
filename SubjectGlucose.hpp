@@ -60,7 +60,6 @@ public:
     
     // Method:
     //      Perform the evolution under the given foodIntakeEvents and exerciseEvents
-    //      Note: SO FAR NO TREATMENT ON 'EXERCISEEVENTS' YET!
     // Outcome:
     //      Store the evolution results in 'spline' for later interpolation
     void EvolutionUnderFoodIntakeExerciseEvents();
@@ -71,9 +70,7 @@ public:
     //      timeInterval -- the user specified timeInterval
     // Output:
     //      the glucose levels, in the form of <time, glucose>, in the user-specified intervals,
-    //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ... }.
-    //      Note: The last time instant in the output may NOT be the last time instant in 'foodIntakeEvents'
-    //              or 'exerciseEvents', as they may not be zero under the modulus of 'timeInterval'.
+    //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ..., t_end }.
     std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeExerciseEvents(double timeInterval);
     std::vector<std::pair<double, double>> InsulinUnderFoodIntakeExerciseEvents(double timeInterval);
     
@@ -146,8 +143,6 @@ public:
     
     // Directly input the names of the fitted parameters that are to be minimized
     std::map<std::string, double> EstimateFittedParameters_EDES (const std::vector<std::string> &chosenFittedParams_str);
-    
-    // Directly input the names of the fitted parameters that are to be minimized
     std::map<std::string, double> EstimateFittedParameters_EDES_Ex (const std::vector<std::string> &chosenFittedParams_str);
     
 private:

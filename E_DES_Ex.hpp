@@ -44,7 +44,7 @@ public:
     void SetCheckPts(const std::vector<double> &check_pts_input) { check_pts = check_pts_input;}
     
     // -------------  Extracting model paramers
-    std::tuple<int, double, double, double, double, double, double, double, int> GetEvolutionSpecifics() {
+    std::tuple<int, double, double, double, double, double, double, int> GetEvolutionSpecifics() {
         return {type, Mb, Gpl_basal, Ipl_basal, this_meal, latest_meal, delta_eat, ex_type};
     }
     std::vector<double> GetInitConditions() {
