@@ -45,7 +45,7 @@ public:
     
     // -------------  Extracting model paramers
     std::tuple<int, double, double, double, double, double, double, int> GetEvolutionSpecifics() {
-        return {type, Mb, Gpl_basal, Ipl_basal, this_meal, latest_meal, delta_eat, ex_type};
+        return std::make_tuple(type, Mb, Gpl_basal, Ipl_basal, this_meal, latest_meal, delta_eat, ex_type);
     }
     std::vector<double> GetInitConditions() {
         return {t_init, MGgut_init, Gpl_init, Ipl_init, Jpl_init, Iif_init, ExPre_init, Ex_init};

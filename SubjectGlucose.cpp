@@ -408,7 +408,7 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES (con
     min_func.n = num_params;
     min_func.f = gsl_EstimateFittedParameters_EDES;
     // prepare the params to be passed to 'gsl_min_fitted_params_SSR_func'
-    std::tuple<SubjectGlucose *, std::map<std::string, std::pair<double, double>> *> params_tmp = {this, &dict_lower_upper_bounds};
+    std::tuple<SubjectGlucose *, std::map<std::string, std::pair<double, double>> *> params_tmp = std::make_tuple(this, &dict_lower_upper_bounds);
     min_func.params = &params_tmp;
     
     s = gsl_multimin_fminimizer_alloc (T, num_params);
@@ -605,7 +605,7 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex (
     min_func.n = num_params;
     min_func.f = gsl_EstimateFittedParameters_EDES_Ex;
     // prepare the params to be passed to 'gsl_min_fitted_params_SSR_func'
-    std::tuple<SubjectGlucose *, std::map<std::string, std::pair<double, double>> *> params_tmp = {this, &dict_lower_upper_bounds};
+    std::tuple<SubjectGlucose *, std::map<std::string, std::pair<double, double>> *> params_tmp = std::make_tuple(this, &dict_lower_upper_bounds);
     min_func.params = &params_tmp;
     
     s = gsl_multimin_fminimizer_alloc (T, num_params);
