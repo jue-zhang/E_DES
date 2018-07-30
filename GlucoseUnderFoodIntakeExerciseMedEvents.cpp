@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <time.h>
 
 #include "SubjectGlucose.hpp"
 
@@ -18,6 +19,9 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
+    
+    time_t start, finish;
+    start = clock();
     
     SubjectGlucose subject;
     
@@ -70,9 +74,9 @@ int main(int argc, const char * argv[]) {
     };
     
     std::vector<std::tuple<double, int, double>> SAInsulinEvents = {
-        {7*60., 0, 7500*1.5} // <time, type, amount(mU)>
-        ,{13*60., 0, 7500*1.5}
-        ,{19*60., 0, 7500*1.5}
+//        {7*60., 0, 7500*1.5} // <time, type, amount(mU)>
+//        ,{13*60., 0, 7500*1.5}
+//        ,{19*60., 0, 7500*1.5}
     };
     
     std::vector<std::tuple<double, int, double>> LAInsulinEvents = {
@@ -93,11 +97,11 @@ int main(int argc, const char * argv[]) {
     //  while extracting the results multiple times with different timeIntervals. This is because
     //  after performing the evolution, an internal interpolation function on the resultant glucose levels is stored,
     //  so that to extract glucose levels with different timeIntervals, one can directly start from the interpolation function.
-    subject.EvolutionUnderFoodIntakeExerciseEvents();
+    subject.EvolutionUnderFoodExInsulinEvents();
     
     // extract the obtained glucose levels at the user specified time intervals
     double timeInterval = 5.;
-    std::vector<std::pair<double, double>> glucoses = subject.GlucoseUnderFoodIntakeExerciseEvents(timeInterval);
+    std::vector<std::pair<double, double>> glucoses = subject.ObtainGlucose(timeInterval);
     
     // export results:
     ofstream output;
@@ -108,6 +112,9 @@ int main(int argc, const char * argv[]) {
         output << glucose.first /60. << " " << glucose.second << endl;
     }
     output.close();
+    
+    finish = clock();
+    cout << "elapsed time (sec): " << (double) (finish - start)/CLOCKS_PER_SEC << endl;
 
     return 0;
 }

@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <time.h>
 
 #include "SubjectGlucose.hpp"
 
@@ -18,6 +19,12 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
+    
+    clock_t start, finish;
+    
+    start = clock();
+    
+    cout << "start...." << endl;
     
     // +++++++++++++++++   Using the fitted curve in Figure 14 of Dr. Mass's thesis
     
@@ -52,14 +59,15 @@ int main(int argc, const char * argv[]) {
     
     vector<string> fittedParamsAll_str = {"k1", "k2", "k3", "k4", "k5", "k6", "k7",
         "k8", "k9", "k10", "k11", "sigma", "KM", "k4e", "k5e", "k6e", "k8e", "lam"};
-    vector<string> chosenFittedParams_str = {"k5", "k6", "k7", "k8", "KM"};
+//    vector<string> chosenFittedParams_str = {"k5", "k6", "k7", "k8", "KM"};
+    vector<string> chosenFittedParams_str = {"k1", "k2", "k6", "k7", "k8", "k10"};
     auto fitted_params = sGlucose.EstimateFittedParameters_EDES_Ex_Med(chosenFittedParams_str);
     
     ofstream output;
-    output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_thesis_fig14_d2.dat", ofstream::out);
+    output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_thesis_fig14_d2_test.dat", ofstream::out);
     
-    // +++++++++++++++++   Using the fitted curve in Figure 14 of Dr. Mass's thesis
-    
+//    // +++++++++++++++++   Using the fitted curve in Figure 14 of Dr. Mass's thesis
+//    
 //    string dataset_file_path = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/datasets_for_param_estimation/Mass_thesis/fig14_h_glucose_insulin_with_error.dat";
 //    
 //    SubjectGlucose sGlucose;
@@ -70,7 +78,7 @@ int main(int argc, const char * argv[]) {
 //    vector<SubjectGlucose::TypeSubjectSpecifics> dailySubjectSpecifics = {
 //        {0 , 75., 4.55, 16., 4.55, 16.}
 //    };
-//    
+//
 //    vector<SubjectGlucose::TypeDailyFoodIntakeEvents> dailyFoodIntakeEvents = {
 //        { {0., 75E3}, {360., 0.} }
 //    };
@@ -136,6 +144,10 @@ int main(int argc, const char * argv[]) {
     output.close();
 
     
+    
+    
+    finish = clock();
+    cout << "Time elapsed (sec): " << (double) (finish-start)/CLOCKS_PER_SEC << endl;
     
     return 0;
 }

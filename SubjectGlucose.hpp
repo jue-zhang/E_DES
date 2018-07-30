@@ -29,6 +29,8 @@
 #include "E_DES_Ex_Med.hpp"
 
 class SubjectGlucose{
+    friend void MultiNest_LogLike(double *Cube, int &ndim, int &npars, double &lnew, void *context);
+    
     
     // ++++++++++++++++++++++++++++++   Short-hand type declarations  ++++++++++++++++++++++++++++++
 public:
@@ -79,25 +81,27 @@ public:
 public:
     
     // Method:
-    //      Perform the evolution under the given foodIntakeEvents and exerciseEvents
+    //      Perform the evolution under the given events
     // Outcome:
     //      Store the evolution results in 'spline' for later interpolation
-    void EvolutionUnderFoodIntakeExerciseEvents();
+    void EvolutionUnderFoodIntakeExerciseEvents(); // foodIntakeEvents and exerciseEvents
+    void EvolutionUnderFoodExInsulinEvents(); // food, Ex, insulin events
+    
 
     // Method:
-    //      Obtain the glucose levels in the user-specified intervals under a set of consective food intake and excercise events
+    //      Obtain the glucose levels in the user-specified intervals under a set of consective events
     // Input:
     //      timeInterval -- the user specified timeInterval
     // Output:
     //      the glucose levels, in the form of <time, glucose>, in the user-specified intervals,
     //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ..., t_end }.
-    std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeExerciseEvents(double timeInterval);
-    std::vector<std::pair<double, double>> InsulinUnderFoodIntakeExerciseEvents(double timeInterval);
+    std::vector<std::pair<double, double>> ObtainGlucose(double timeInterval);
+    std::vector<std::pair<double, double>> ObtainInsulin(double timeInterval);
     
     // Method:
     //      Obtain the glucose levels according to 'check_pts'
-    std::vector<std::pair<double, double>> GlucoseUnderFoodIntakeExerciseEvents(const std::vector<double> &check_pts);
-    std::vector<std::pair<double, double>> InsulinUnderFoodIntakeExerciseEvents(const std::vector<double> &check_pts);
+    std::vector<std::pair<double, double>> ObtainGlucose(const std::vector<double> &check_pts);
+    std::vector<std::pair<double, double>> ObtainInsulin(const std::vector<double> &check_pts);
     
     
 //    std::vector<std::pair<double, double>> GetGlucoses(); // return the obtained glucoses at the specied time instants
@@ -173,18 +177,19 @@ public:
     
 //    // Method:
 //    //      Estimate the chosen set of fitted parameters
-//    // Input:
-//    //      chosenFittedParams -- the chosen set of fitted params, a vector of boolean values corresponding to each fitted-params
-//    //      Order of fitted-params:
-//    //      0  1  2  3  4  5  6  7  8  9   10  11  12    13
-//    //      |  |  |  |  |  |  |  |  |  |   |   |   |     |
-//    //      k1 k2 k3 k4 k5 k6 k7 k8 k9 k10 k11 k12 sigma KM
-//    void EstimateFittedParameters_EDES (const std::vector<bool> &chosenFittedParams);
-    
-    // Directly input the names of the fitted parameters that are to be minimized
+//    // Directly input the names of the fitted parameters that are to be minimized
     std::map<std::string, double> EstimateFittedParameters_EDES (const std::vector<std::string> &chosenFittedParams_str);
     std::map<std::string, double> EstimateFittedParameters_EDES_Ex (const std::vector<std::string> &chosenFittedParams_str);
     std::map<std::string, double> EstimateFittedParameters_EDES_Ex_Med (const std::vector<std::string> &chosenFittedParams_str);
+    std::map<std::string, double> EstimateFittedParameters_EDES_Ex_Med_SingleMeal (const std::vector<std::string> &chosenFittedParams_str);
+    
+    // Method:
+    //      return the 4-h glucose evolution curve
+    // input:
+    //      pre- and post-meal glucose and food-intake event
+    // output: degree of fit, the fitted model params, the 4-h glucose curve (1-min interval)
+    std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, double>>> ReconGlucoseCurve(int type, double bodyMass, double glu_pre, double glu_post, double glu_post_time, double food, double timeInterval);
+    
     
 private:
     // internal usage for minimizing the fitted parameters

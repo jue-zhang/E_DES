@@ -198,11 +198,11 @@ void E_DES_Ex_Med::SetFittedParams(std::map<std::string, double> dict_fp){
     if (dict_fp.find("sigma") != dict_fp.end()) sigma = dict_fp["sigma"];
     if (dict_fp.find("KM") != dict_fp.end())    KM = dict_fp["KM"];
     // exercise
-    if (dict_fp.find("k4e") != dict_fp.end())    KM = dict_fp["k4e"];
-    if (dict_fp.find("k5e") != dict_fp.end())    KM = dict_fp["k5e"];
-    if (dict_fp.find("k6e") != dict_fp.end())    KM = dict_fp["k6e"];
-    if (dict_fp.find("k8e") != dict_fp.end())    KM = dict_fp["k8e"];
-    if (dict_fp.find("lam") != dict_fp.end())    KM = dict_fp["lam"];
+    if (dict_fp.find("k4e") != dict_fp.end())    k4e = dict_fp["k4e"];
+    if (dict_fp.find("k5e") != dict_fp.end())    k5e = dict_fp["k5e"];
+    if (dict_fp.find("k6e") != dict_fp.end())    k6e = dict_fp["k6e"];
+    if (dict_fp.find("k8e") != dict_fp.end())    k8e = dict_fp["k8e"];
+    if (dict_fp.find("lam") != dict_fp.end())    lam = dict_fp["lam"];
     
 }
 
@@ -271,10 +271,10 @@ int E_DES_Ex_Med::Solver_gsl() {
     
     // -------- define the high-level wrapper, "driver", to solve ODEs
     // step function: gsl_odeiv2_step_rkf45
-    double hstart = 1e-6; // the initial step size
+    double hstart = 0.1; // the initial step size
     // error control: for each dynamic variable y, the desired error level
     //                  D_i = epsabs + epsrel * (a_y |y_i| + a_dydt h |y_i^\prime|)
-    double epsabs = 1e-6; // the desired absolute error
+    double epsabs = 0.05; // the desired absolute error
     double epsrel = 0.; // the desired relative error
     gsl_odeiv2_driver * ode_driver = gsl_odeiv2_driver_alloc_y_new(&ode_sys, gsl_odeiv2_step_rkf45, hstart, epsabs, epsrel);
     

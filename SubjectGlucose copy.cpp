@@ -465,7 +465,7 @@ void SubjectGlucose::EvolutionUnderFoodExInsulinEvents(){
     // Consideration of 'foodIntakeExerciseEvents'
     auto num_evols = foodIntakeExerciseSaILaIEvents.size() - 1; // total number of evolutions
     std::vector<double> initialConditions_tmp;
-    const int evol_steps = 40;
+    const int evol_steps = 50;
     for (int evol = 0; evol < num_evols ; ++evol) {
         // set up params for the current evolution
         // set evolution specifices
@@ -529,7 +529,6 @@ void SubjectGlucose::EvolutionUnderFoodExInsulinEvents(){
     gsl_spline_init (insulin_spline, time_instants_interp, insulins_interp, sz);
     
 }
-
 
 std::vector<std::pair<double, double>> SubjectGlucose::ObtainGlucose(double timeInterval){
     
@@ -1064,19 +1063,19 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex_M
         dict_lower_upper_bounds.insert({ chosenFittedParams_str[i], {lower_tmp, upper_tmp} });
     }
     // special treatment on some fitted parameters
-    //    // k1, k2, sigma, KM
-    //    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k1"] = { 0.005, 0.035 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k2"] = { 0.05, 0.8 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("sigma") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["sigma"] = { 1., 2. };
-    //    }
-    //    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["KM"] = { 5., 30. };
-    //    }
+//    // k1, k2, sigma, KM
+//    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k1"] = { 0.005, 0.035 };
+//    }
+//    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k2"] = { 0.05, 0.8 };
+//    }
+//    if (dict_lower_upper_bounds.find("sigma") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["sigma"] = { 1., 2. };
+//    }
+//    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["KM"] = { 5., 30. };
+//    }
     // k5, k6, k7, k8, KM, from healthy to D2
     if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
         dict_lower_upper_bounds["k5"] = { 0.1*fittedParamsInit["k5"], fittedParamsInit["k5"] };
@@ -1093,19 +1092,19 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex_M
     if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
         dict_lower_upper_bounds["KM"] = { fittedParamsInit["KM"], 30. };
     }
-    //    // k4e, k5e, k8e, lam:
-    //    if (dict_lower_upper_bounds.find("k4e") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k4e"] = { 0.000049, 0.00005 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("k5e") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k5e"] = { 0.000049, 0.00005 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("k8e") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k8e"] = { 0.000049, 0.00005 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("lam") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["lam"] = { 1/120., 1/119.9 };
-    //    }
+//    // k4e, k5e, k8e, lam:
+//    if (dict_lower_upper_bounds.find("k4e") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k4e"] = { 0.000049, 0.00005 };
+//    }
+//    if (dict_lower_upper_bounds.find("k5e") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k5e"] = { 0.000049, 0.00005 };
+//    }
+//    if (dict_lower_upper_bounds.find("k8e") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k8e"] = { 0.000049, 0.00005 };
+//    }
+//    if (dict_lower_upper_bounds.find("lam") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["lam"] = { 1/120., 1/119.9 };
+//    }
     
     // set up the minimized params (gsl_vector) used in the gsl subroutine of minimization
     auto num_params = chosenFittedParams_str.size();
@@ -1155,14 +1154,6 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex_M
     }
     double epsabs = num_data_pts * 2 * 0.5; // average fitting within about 0.5 sigma for all data points, '2' for both glucoses and insulins
     
-    // check iteration: terminate if the results are converging
-    const int num_check_iter = 10; // num of iteration results to be averaged over
-    double pcnt_curr = 1. / num_check_iter;
-    double pcnt_prev = 1- pcnt_curr;
-    double avg_check_iter_prev = 100000.;
-    double avg_check_iter_curr = 0.;
-    double precision_check_iter = 0.5;
-    
     // iterate:
     do
     {
@@ -1189,11 +1180,6 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex_M
             ++index;
         }
         std::cout << SSR_curr << std::endl;
-        
-        // check iteration: terminate if the results are converging
-        avg_check_iter_curr = pcnt_prev * avg_check_iter_prev + pcnt_curr * SSR_curr;
-        if (fabs(avg_check_iter_curr - avg_check_iter_prev) < precision_check_iter) break;
-        avg_check_iter_prev = avg_check_iter_curr;
         
         if (status == GSL_SUCCESS){
             std::cout << "converged to a minimum!" << std::endl;
@@ -1255,8 +1241,8 @@ double SubjectGlucose::gsl_EstimateFittedParameters_EDES_Ex_Med (const gsl_vecto
     sGlucose_tmp.dailySubjectSpecifics = this2->dailySubjectSpecifics;
     sGlucose_tmp.dailyFoodIntakeEvents = this2->dailyFoodIntakeEvents;
     sGlucose_tmp.dailyExerciseEvents = this2->dailyExerciseEvents;
-    sGlucose_tmp.dailyLAInsulinEvents = this2->dailyLAInsulinEvents;
     sGlucose_tmp.dailySAInsulinEvents = this2->dailySAInsulinEvents;
+    sGlucose_tmp.dailyLAInsulinEvents = this2->dailyLAInsulinEvents;
     
     auto num_data_sets = sGlucose_tmp.dailyDataSets.size();
     for (int i = 0; i < num_data_sets; ++i) {
@@ -1265,201 +1251,17 @@ double SubjectGlucose::gsl_EstimateFittedParameters_EDES_Ex_Med (const gsl_vecto
         sGlucose_tmp.SetFittedParams_EDES_Ex_Med(fittedParamsNew); // update the minimized fitted-params
         sGlucose_tmp.SetFoodIntakeEvents(sGlucose_tmp.dailyFoodIntakeEvents[i]);
         sGlucose_tmp.SetExerciseEvents(sGlucose_tmp.dailyExerciseEvents[i]);
-        sGlucose_tmp.SetLaIEvents(sGlucose_tmp.dailyLAInsulinEvents[i]);
         sGlucose_tmp.SetSaIEvents(sGlucose_tmp.dailySAInsulinEvents[i]);
+        sGlucose_tmp.SetLaIEvents(sGlucose_tmp.dailyLAInsulinEvents[i]);
+//        sGlucose_tmp.CombineFoodIntakeExerciseEvents();
         sGlucose_tmp.EvolutionUnderFoodExInsulinEvents();
         auto check_pts = sGlucose_tmp.ObtainCheckPtsFromDailyDataSets(sGlucose_tmp.dailyDataSets[i]);
         auto glucoses_tmp = sGlucose_tmp.ObtainGlucose(check_pts);
         auto insulins_tmp = sGlucose_tmp.ObtainInsulin(check_pts);
         SSR += sGlucose_tmp.ComputeSSR(sGlucose_tmp.dailyDataSets[i], glucoses_tmp, insulins_tmp);
-//        // test
-//        for (auto glucose : glucoses_tmp) {
-//            std::cout << glucose.first << " " << glucose.second << std::endl;
-//        }
     }
     
     return SSR;
-}
-
-std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, double>>> SubjectGlucose::ReconGlucoseCurve(int type, double bodyMass, double glu_pre, double glu_post, double glu_post_time, double food, double timeInterval){
-    
-    ClearDatasetsForParameterEstimation();
-    
-    dailyDataSets = {{ {0., glu_pre, 0.1, 0., 0.}, {glu_post_time, glu_post, 0.1, 0., 0.} }};
-    dailySubjectSpecifics = {{type, bodyMass, glu_pre, 8., glu_pre, 8.}};
-    dailyFoodIntakeEvents = {{ {0., food}, {240., 0.} }};
-    dailyExerciseEvents = { {} };
-    dailySAInsulinEvents = { {} };
-    dailyLAInsulinEvents = { {} } ;
-    
-    SetFittedParams_EDES_Ex_Med(type);
-    
-    std::vector<std::string> chosenFittedParams_str = {"k1", "k2", "k4", "k5", "k6", "k7", "k8", "k9", "KM"};
-    
-    // obtain the initial fitted-params before fitting
-    std::map<std::string, double> fittedParamsInit = eDES_ex_med.GetFittedParamsDict();
-    
-    // set up the dictionary for the fitted params
-    std::map<std::string, std::pair<double, double>> dict_lower_upper_bounds;
-    // default setting for the allowed ranges of 'fp', [0.01 * currVal, 100 * currVal]
-    double lower_tmp, upper_tmp;
-    for (int i = 0; i < chosenFittedParams_str.size(); ++i) {
-        lower_tmp = 0.01 * fittedParamsInit[chosenFittedParams_str[i]];
-        upper_tmp = 100 * fittedParamsInit[chosenFittedParams_str[i]];
-        dict_lower_upper_bounds.insert({ chosenFittedParams_str[i], {lower_tmp, upper_tmp} });
-    }
-    // "k1", "k2", "k4", "k5", "k6", "k7", "k8", "k9"
-    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k1"] = { 0.01, 0.1 };
-    }
-    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k2"] = { 0.01, 1. };
-    }
-    if (dict_lower_upper_bounds.find("k4") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k4"] = { 0.001, 0.004 };
-    }
-    if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k5"] = { 0.001, 0.02 };
-    }
-    if (dict_lower_upper_bounds.find("k6") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k6"] = { 0.05, 1. };
-    }
-    if (dict_lower_upper_bounds.find("k7") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k7"] = { 0.01, 0.3 };
-    }
-    if (dict_lower_upper_bounds.find("k8") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k8"] = { 0.1, 20 };
-    }
-    if (dict_lower_upper_bounds.find("k9") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k9"] = { 0.005, 0.1 };
-    }
-    
-    // set up the minimized params (gsl_vector) used in the gsl subroutine of minimization
-    auto num_params = chosenFittedParams_str.size();
-    gsl_vector *initial_step_size, *min_params; // 'min_params' -- params to be performed minimizations
-    min_params = gsl_vector_alloc (num_params);
-    initial_step_size = gsl_vector_alloc (num_params);
-    // parameter transformation, as in GSL no constraints are imposed on 'min_params'
-    //      1. transform fitted-params 'fp' into 'log10(fp)'
-    //      2. for each 'log10(fp)', if it should be within [a, b], then 'min_params' is given
-    //          log10(fp) = SS + SD * tanh(min_params), where SS = (a+b)/2, SD = (b-a)/2
-    //          ref.: http://cafim.sssup.it/~giulio/software/multimin/multimin.html
-    //    std::vector<double> SS, SD; // store the transformation info., used for later conversion from 'min_params' to 'fitted-paras'
-    double SS_tmp, SD_tmp, log10_lower_tmp, log10_upper_tmp;
-    int index = 0;
-    for (auto it = dict_lower_upper_bounds.begin(); it != dict_lower_upper_bounds.end(); ++it) {
-        log10_lower_tmp = log10((it->second).first);
-        log10_upper_tmp = log10((it->second).second);
-        SS_tmp = ( log10_lower_tmp + log10_upper_tmp) / 2.;
-        SD_tmp = ( - log10_lower_tmp + log10_upper_tmp) / 2.;
-        gsl_vector_set (min_params, index, 0); // centering the initial values of 'min_params' at 0
-        gsl_vector_set (initial_step_size, index, 0.01); // initial step size for 'min_params'
-        ++index;
-    }
-    
-    // set up the minimizer
-    const gsl_multimin_fminimizer_type *T = gsl_multimin_fminimizer_nmsimplex2; // method used for minimization: Nelder-Mead
-    gsl_multimin_fminimizer *s = nullptr; // initial the minimizer
-    gsl_multimin_function min_func; // 'min_func' -- functions to be minimized over
-    min_func.n = num_params;
-    min_func.f = gsl_EstimateFittedParameters_EDES_Ex_Med;
-    // prepare the params to be passed to 'gsl_min_fitted_params_SSR_func'
-    std::tuple<SubjectGlucose *, std::map<std::string, std::pair<double, double>> *> params_tmp = std::make_tuple(this, &dict_lower_upper_bounds);
-    min_func.params = &params_tmp;
-    
-    s = gsl_multimin_fminimizer_alloc (T, num_params);
-    gsl_multimin_fminimizer_set (s, &min_func, min_params, initial_step_size);
-    
-    
-    // set up stopping criteria
-    std::size_t iter_max = 500; // max number of iterations
-    std::size_t iter = 0;  // current iter
-    int status;
-    double SSR_curr = 0.;
-    int num_data_pts = 0;
-    for (int i = 0; i < dailyDataSets.size(); ++i) {
-        num_data_pts += dailyDataSets[0].size() - 1;
-    }
-    double epsabs = num_data_pts * 2 * 0.5; // average fitting within about 0.5 sigma for all data points, '2' for both glucoses and insulins
-    
-    // check iteration: terminate if the results are converging
-    const int num_check_iter = 10; // num of iteration results to be averaged over
-    double pcnt_curr = 1. / num_check_iter;
-    double pcnt_prev = 1- pcnt_curr;
-    double avg_check_iter_prev = 100000.;
-    double avg_check_iter_curr = 0.;
-    double precision_check_iter = 0.1;
-    
-    // iterate:
-    do
-    {
-        iter++;
-        status = gsl_multimin_fminimizer_iterate(s);
-        
-        if (status) // break when error occurs
-            break;
-        
-        SSR_curr = s->fval;
-        
-        status = gsl_multimin_test_size (SSR_curr, epsabs);
-        
-        std::cout << iter << " ";
-        int index = 0;
-        for (auto it = dict_lower_upper_bounds.begin(); it != dict_lower_upper_bounds.end(); ++it) {
-            auto fittedParamName = it->first;
-            log10_lower_tmp = log10((it->second).first);
-            log10_upper_tmp = log10((it->second).second);
-            SS_tmp = ( log10_lower_tmp + log10_upper_tmp) / 2.;
-            SD_tmp = ( - log10_lower_tmp + log10_upper_tmp) / 2.;
-            auto fitted_param_tmp = pow( 10, SS_tmp + SD_tmp * tanh( gsl_vector_get(s->x, index)) );
-            std::cout << fittedParamName << " " << fitted_param_tmp << " ";
-            ++index;
-        }
-        std::cout << SSR_curr << std::endl;
-        
-        // check iteration: terminate if the results are converging
-        avg_check_iter_curr = pcnt_prev * avg_check_iter_prev + pcnt_curr * SSR_curr;
-        if (fabs(avg_check_iter_curr - avg_check_iter_prev) < precision_check_iter) break;
-        avg_check_iter_prev = avg_check_iter_curr;
-        
-        if (status == GSL_SUCCESS){
-            std::cout << "converged to a minimum!" << std::endl;
-        }
-        
-    }
-    while (status == GSL_CONTINUE && iter < iter_max);
-    
-    // output all fitted-parameters after fitting
-    index = 0;
-    for (auto it = dict_lower_upper_bounds.begin(); it != dict_lower_upper_bounds.end(); ++it) {
-        auto fittedParamName = it->first;
-        log10_lower_tmp = log10((it->second).first);
-        log10_upper_tmp = log10((it->second).second);
-        SS_tmp = ( log10_lower_tmp + log10_upper_tmp) / 2.;
-        SD_tmp = ( - log10_lower_tmp + log10_upper_tmp) / 2.;
-        auto fitted_param_tmp = pow( 10, SS_tmp + SD_tmp * tanh( gsl_vector_get(s->x, index)) );
-        fittedParamsInit[fittedParamName] = fitted_param_tmp;
-        ++index;
-    }
-    
-    gsl_vector_free(min_params);
-    gsl_vector_free(initial_step_size);
-    gsl_multimin_fminimizer_free (s);
-    
-    
-    SetSubjectSpecifics(dailySubjectSpecifics[0]);
-    SetFittedParams_EDES_Ex_Med(fittedParamsInit);
-    SetFoodIntakeEvents(dailyFoodIntakeEvents[0]);
-    SetExerciseEvents(dailyExerciseEvents[0]);
-    SetSaIEvents(dailySAInsulinEvents[0]);
-    SetLaIEvents(dailyLAInsulinEvents[0]);
-    
-    EvolutionUnderFoodExInsulinEvents();
-    
-    std::vector<std::pair<double, double>> glucoses = ObtainGlucose(timeInterval);
-    
-    return std::make_tuple(SSR_curr, fittedParamsInit, glucoses);
-
 }
 
 
@@ -1521,5 +1323,4 @@ SubjectGlucose::~SubjectGlucose(){
     }
     
 }
-
 
