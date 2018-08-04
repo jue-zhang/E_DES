@@ -77,6 +77,12 @@ public:
     // type of a single personal data set
     using TypeDataSet = std::vector<TypeDataSetRow>;
     
+    // type of outputed glucose curves
+    using TypeGlucosesOutput = std::vector<std::pair<double, double>>;
+    
+    // type of food attributes
+    using TypeFoodAttrs = double;
+    
     // ++++++++++++++++++++++++++++++   Methods for evolution  ++++++++++++++++++++++++++++++
 public:
     
@@ -95,16 +101,13 @@ public:
     // Output:
     //      the glucose levels, in the form of <time, glucose>, in the user-specified intervals,
     //      i.e., {t_init, t_init + timeInterval, t_init + 2 * timeInterval, ..., t_end }.
-    std::vector<std::pair<double, double>> ObtainGlucose(double timeInterval);
-    std::vector<std::pair<double, double>> ObtainInsulin(double timeInterval);
+    TypeGlucosesOutput ObtainGlucose(double timeInterval);
+    TypeGlucosesOutput ObtainInsulin(double timeInterval);
     
     // Method:
     //      Obtain the glucose levels according to 'check_pts'
-    std::vector<std::pair<double, double>> ObtainGlucose(const std::vector<double> &check_pts);
-    std::vector<std::pair<double, double>> ObtainInsulin(const std::vector<double> &check_pts);
-    
-    
-//    std::vector<std::pair<double, double>> GetGlucoses(); // return the obtained glucoses at the specied time instants
+    TypeGlucosesOutput ObtainGlucose(const std::vector<double> &check_pts);
+    TypeGlucosesOutput ObtainInsulin(const std::vector<double> &check_pts);
     
 private:
     void ClearPreEvolutionOutput();
@@ -181,13 +184,12 @@ public:
     std::map<std::string, double> EstimateFittedParameters_EDES (const std::vector<std::string> &chosenFittedParams_str);
     std::map<std::string, double> EstimateFittedParameters_EDES_Ex (const std::vector<std::string> &chosenFittedParams_str);
     std::map<std::string, double> EstimateFittedParameters_EDES_Ex_Med (const std::vector<std::string> &chosenFittedParams_str);
-    std::map<std::string, double> EstimateFittedParameters_EDES_Ex_Med_SingleMeal (const std::vector<std::string> &chosenFittedParams_str);
     
     // Method:
     //      return the 4-h glucose evolution curve
     // input:
     //      pre- and post-meal glucose and food-intake event
-    // output: degree of fit, the fitted model params, the 4-h glucose curve (1-min interval)
+    // output: degree of fit, the fitted model params, the 4-h glucose curve
     std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, double>>> ReconGlucoseCurve(int type, double bodyMass, double glu_pre, double glu_post, double glu_post_time, double food, double timeInterval);
     
     
@@ -200,6 +202,29 @@ private:
                       std::vector<std::pair<double, double>> &glucoses,
                       std::vector<std::pair<double, double>> &insulins);
     std::vector<double> ObtainCheckPtsFromDailyDataSets( const TypeDataSet &dataSet);
+    
+    // ++++++++++++++++++++++++++++++   Methods for analyzing the glucose curve  ++++++++++++++++++++++++++++++
+public:
+    // Method: analyzing the glucose curve
+    // input: glucose curve
+    // output: mean, HbA1c, amplitude, glu_range_time_pcnt(<3.9, 3.9-7.8, 7.8-10, >10.)
+    std::tuple<double, double, double, std::vector<double>> AnalyzeGlucoseCurve(const std::vector<std::pair<double, double>> &glucoses);
+    
+    // Method: evaluating the severity level of glucose levels
+    // input: bodyMass, food, glu_pre, fitted_glucoses
+    // output: severity, H_glucoses, GFT_glucoses, T2Light_glucoses, T2Mid_glucoses, T2Heavy_glucoses
+    std::tuple<int, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>> EvaluateSeverityFittedGlucoses(double bodyMass, double food, double glu_pre, const std::vector<std::pair<double, double>> &fitted_glucoses);
+    
+private:
+    double GlucosesCloseness(const std::vector<std::pair<double, double>> &fitted_glucoses, const std::vector<std::pair<double, double>> &standard_glucoses);
+    
+    // ++++++++++++++++++++++++++++++   Methods for single meal evaluation  ++++++++++++++++++++++++++++++
+public:
+    
+    // Method: evaluating the single meal composition based on the glucose results
+    // input: foodInputList, bodyMass, FBG, food, modelParams
+    // Output: mean, amplitude, PBG2h, orderedFoodList_mean, orderedFoodList_MAGE, each_food_glucoses
+    std::tuple<double, double, double, std::vector<std::pair<std::string, double>>, std::vector<std::pair<std::string, double>>, std::vector<TypeGlucosesOutput>> EvaluateSingleMeal_Glucose(const std::vector<std::pair<std::string, TypeFoodAttrs>> &foodInputLists, double bodyMass, double FBG, const std::map<std::string, double> &modelParams);
 
     // ++++++++++++++++++++++++++++++   Methods for class itself  ++++++++++++++++++++++++++++++
 public:

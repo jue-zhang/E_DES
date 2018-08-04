@@ -410,18 +410,18 @@ int E_DES_Ex_Med::gsl_ODEs (double t, const double y[], double f[], void *params
     double gliv_up = gbliv - k3 * (y[1] - Gbpl) - k4 * (1 + k4e * y[5]) * beta * (y[2] - Ibpl);
     double gliv_down = gbliv - k10 * (y[1] - Gbpl) - k4 * (1 + k4e * y[5]) * beta * (y[2] - Ibpl);
     double gliv = (y[1] >= Gbpl)? gliv_up : gliv_down;
-//    double gnonit_h = gbliv * (KM+Gbpl)/Gbpl * y[1] / (KM+y[1]);
-//    double gnonit = gnonit_h;
-    double gnonit = c2 * y[1] / (KM+y[1]);
+    double gnonit_h = gbliv * (KM+Gbpl)/Gbpl * y[1] / (KM+y[1]);
+    double gnonit = gnonit_h;
+//    double gnonit = c2 * y[1] / (KM+y[1]);
     double git = k5 * (1 + k5e * y[5]) * beta * y[2] * y[1] / (KM + y[1]);
     double gren = (y[1] >= Gthpl)? (c1/vG/Mb) * (y[1] - Gthpl) : 0;
     f[1] = ggut + gliv - gnonit - git - gren;
     
     // Insulin in the plasma
     double ipnc = 1/beta* (k6*(1-k6e*y[5])*(y[1]-Gbpl) + k7/tau_i*y[3] + k7/tau_i*Gbpl + k8*(1-k8e*y[5])*tau_d*f[1]);
-//    double iliv_h = k7*Gbpl*y[2]/(beta*tau_i*Ibpl);
-//    double iliv = iliv_h;
-    double iliv = c3 * y[2];
+    double iliv_h = k7*Gbpl*y[2]/(beta*tau_i*Ibpl);
+    double iliv = iliv_h;
+//    double iliv = c3 * y[2];
     double iif  = k9*(y[2] - Ibpl);
     double isa  = r3/vI/Mb*y[7];
     //      careful treatment on long-acting insulin
@@ -472,20 +472,40 @@ int E_DES_Ex_Med::gsl_ODEs (double t, const double y[], double f[], void *params
 //double E_DES_Ex_Med::k8e_H = 0.5;        // exercise
 //double E_DES_Ex_Med::lam_H = 1/120.;        // exercise
 
-// pre-setted fitted-params: healthy person (optimized 7/22/2018, based on Fig.17 of Mass' thesis)
-double E_DES_Ex_Med::k1_H = 0.0163619;
-double E_DES_Ex_Med::k2_H = 0.18896;
-double E_DES_Ex_Med::k3_H = 0.0566132;
-double E_DES_Ex_Med::k4_H = 0.00143478;
-double E_DES_Ex_Med::k5_H = 0.000120797;
-double E_DES_Ex_Med::k6_H = 0.550253;
-double E_DES_Ex_Med::k7_H = 0.00749822;
-double E_DES_Ex_Med::k8_H = 2.78914;
-double E_DES_Ex_Med::k9_H = 0.0261024;
+//// pre-setted fitted-params: healthy person (optimized 7/22/2018, based on Fig.17 of Mass' thesis)
+//double E_DES_Ex_Med::k1_H = 0.0163619;
+//double E_DES_Ex_Med::k2_H = 0.18896;
+//double E_DES_Ex_Med::k3_H = 0.0566132;
+//double E_DES_Ex_Med::k4_H = 0.00143478;
+//double E_DES_Ex_Med::k5_H = 0.000120797;
+//double E_DES_Ex_Med::k6_H = 0.550253;
+//double E_DES_Ex_Med::k7_H = 0.00749822;
+//double E_DES_Ex_Med::k8_H = 2.78914;
+//double E_DES_Ex_Med::k9_H = 0.0261024;
+//double E_DES_Ex_Med::k10_H = 0.05;
+//double E_DES_Ex_Med::k11_H = 0.;
+//double E_DES_Ex_Med::sigma_H = 1.22447;
+//double E_DES_Ex_Med::KM_H = 15.532;
+//double E_DES_Ex_Med::k4e_H = 0.;        // exercise
+//double E_DES_Ex_Med::k5e_H = 10.;        // exercise
+//double E_DES_Ex_Med::k6e_H = 0.05;        // exercise
+//double E_DES_Ex_Med::k8e_H = 0.5;        // exercise
+//double E_DES_Ex_Med::lam_H = 1/120.;        // exercise
+
+// pre-setted fitted-params: healthy person (optimized 8/2/2018, based on the literature data in EDES paper, using Multinest)
+double E_DES_Ex_Med::k1_H = 0.01443;
+double E_DES_Ex_Med::k2_H = 3.795;
+double E_DES_Ex_Med::k3_H = 0.00069218;
+double E_DES_Ex_Med::k4_H = 0.0020239;
+double E_DES_Ex_Med::k5_H = 0.00706987;
+double E_DES_Ex_Med::k6_H = 1.1352;
+double E_DES_Ex_Med::k7_H = 0.4393;
+double E_DES_Ex_Med::k8_H = 3.4121;
+double E_DES_Ex_Med::k9_H = 0.07165;
 double E_DES_Ex_Med::k10_H = 0.05;
 double E_DES_Ex_Med::k11_H = 0.;
-double E_DES_Ex_Med::sigma_H = 1.22447;
-double E_DES_Ex_Med::KM_H = 15.532;
+double E_DES_Ex_Med::sigma_H = 1.3557;
+double E_DES_Ex_Med::KM_H = 13.157153;
 double E_DES_Ex_Med::k4e_H = 0.;        // exercise
 double E_DES_Ex_Med::k5e_H = 10.;        // exercise
 double E_DES_Ex_Med::k6e_H = 0.05;        // exercise
@@ -512,25 +532,47 @@ double E_DES_Ex_Med::k6e_D1 = 0.1;        // exercise
 double E_DES_Ex_Med::k8e_D1 = 0.0;        // exercise
 double E_DES_Ex_Med::lam_D1 = 1/120.;        // exercise
 
-// pre-setted fitted-params: D2   (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
-double E_DES_Ex_Med::k1_D2 = 0.0143161;
-double E_DES_Ex_Med::k2_D2 = 0.309044;
-double E_DES_Ex_Med::k3_D2 = 0.0171316;
-double E_DES_Ex_Med::k4_D2 = 0.00107114;
-double E_DES_Ex_Med::k5_D2 = 5.37166e-04;
-double E_DES_Ex_Med::k6_D2 = 0.251337;
-double E_DES_Ex_Med::k7_D2 = 2.16814e-05;
-double E_DES_Ex_Med::k8_D2 = 1.0832;
-double E_DES_Ex_Med::k9_D2 = 0.024347;
+//// pre-setted fitted-params: D2   (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
+//double E_DES_Ex_Med::k1_D2 = 0.0143161;
+//double E_DES_Ex_Med::k2_D2 = 0.309044;
+//double E_DES_Ex_Med::k3_D2 = 0.0171316;
+//double E_DES_Ex_Med::k4_D2 = 0.00107114;
+//double E_DES_Ex_Med::k5_D2 = 5.37166e-04;
+//double E_DES_Ex_Med::k6_D2 = 0.251337;
+//double E_DES_Ex_Med::k7_D2 = 2.16814e-05;
+//double E_DES_Ex_Med::k8_D2 = 1.0832;
+//double E_DES_Ex_Med::k9_D2 = 0.024347;
+//double E_DES_Ex_Med::k10_D2 = 0.05;
+//double E_DES_Ex_Med::k11_D2 = 0.;
+//double E_DES_Ex_Med::sigma_D2 = 1.31931;
+//double E_DES_Ex_Med::KM_D2 = 23.8407;
+//double E_DES_Ex_Med::k4e_D2 = 0.0;        // exercise
+//double E_DES_Ex_Med::k5e_D2 = 5.;        // exercise
+//double E_DES_Ex_Med::k6e_D2 = 0.1;        // exercise
+//double E_DES_Ex_Med::k8e_D2 = 0.0;        // exercise
+//double E_DES_Ex_Med::lam_D2 = 1/120.;        // exercise
+
+// pre-setted fitted-params: D2 (optimized 8/2/2018, starting from the fitted healthy data in EDES paper, MultiNest, T2Light)
+double E_DES_Ex_Med::k1_D2 = 0.01443;
+double E_DES_Ex_Med::k2_D2 = 3.795;
+double E_DES_Ex_Med::k3_D2 = 0.00069218;
+double E_DES_Ex_Med::k4_D2 = 0.0020239;
+double E_DES_Ex_Med::k5_D2 = 0.0061614996919503069;
+double E_DES_Ex_Med::k6_D2 = 0.58613371991900853;
+double E_DES_Ex_Med::k7_D2 = 0.0131910649054100878;
+double E_DES_Ex_Med::k8_D2 = 3.3528134003819674;
+double E_DES_Ex_Med::k9_D2 = 0.07165;
 double E_DES_Ex_Med::k10_D2 = 0.05;
 double E_DES_Ex_Med::k11_D2 = 0.;
-double E_DES_Ex_Med::sigma_D2 = 1.31931;
-double E_DES_Ex_Med::KM_D2 = 23.8407;
-double E_DES_Ex_Med::k4e_D2 = 0.0;        // exercise
-double E_DES_Ex_Med::k5e_D2 = 5.;        // exercise
-double E_DES_Ex_Med::k6e_D2 = 0.1;        // exercise
-double E_DES_Ex_Med::k8e_D2 = 0.0;        // exercise
+double E_DES_Ex_Med::sigma_D2 = 1.3557514377719031;
+double E_DES_Ex_Med::KM_D2 = 34.881378502063242;
+double E_DES_Ex_Med::k4e_D2 = 0.;        // exercise
+double E_DES_Ex_Med::k5e_D2 = 10.;        // exercise
+double E_DES_Ex_Med::k6e_D2 = 0.05;        // exercise
+double E_DES_Ex_Med::k8e_D2 = 0.5;        // exercise
 double E_DES_Ex_Med::lam_D2 = 1/120.;        // exercise
+
+
 
 // the specifices of long-acting insulin: <h, a, b, ke>
 std::vector<double> E_DES_Ex_Med::insulin_la_specifics = {1.79, 2.88E-3, 5.61E2, 8.49E-1}; // Levemir

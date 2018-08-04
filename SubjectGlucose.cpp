@@ -1064,35 +1064,35 @@ std::map<std::string, double> SubjectGlucose::EstimateFittedParameters_EDES_Ex_M
         dict_lower_upper_bounds.insert({ chosenFittedParams_str[i], {lower_tmp, upper_tmp} });
     }
     // special treatment on some fitted parameters
-    //    // k1, k2, sigma, KM
-    //    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k1"] = { 0.005, 0.035 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["k2"] = { 0.05, 0.8 };
-    //    }
-    //    if (dict_lower_upper_bounds.find("sigma") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["sigma"] = { 1., 2. };
-    //    }
-    //    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
-    //        dict_lower_upper_bounds["KM"] = { 5., 30. };
-    //    }
+        // k1, k2, sigma, KM
+        if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
+            dict_lower_upper_bounds["k1"] = { 0.005, 0.035 };
+        }
+        if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
+            dict_lower_upper_bounds["k2"] = { 0.05, 0.8 };
+        }
+        if (dict_lower_upper_bounds.find("sigma") != dict_lower_upper_bounds.end()) {
+            dict_lower_upper_bounds["sigma"] = { 1., 2. };
+        }
+        if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
+            dict_lower_upper_bounds["KM"] = { 5., 30. };
+        }
     // k5, k6, k7, k8, KM, from healthy to D2
-    if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k5"] = { 0.1*fittedParamsInit["k5"], fittedParamsInit["k5"] };
-    }
-    if (dict_lower_upper_bounds.find("k6") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k6"] = { 0.01*fittedParamsInit["k6"], fittedParamsInit["k6"] };
-    }
-    if (dict_lower_upper_bounds.find("k7") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k7"] = { 0.01*fittedParamsInit["k7"], fittedParamsInit["k7"] };
-    }
-    if (dict_lower_upper_bounds.find("k8") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k8"] = { 0.01*fittedParamsInit["k8"], fittedParamsInit["k8"] };
-    }
-    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["KM"] = { fittedParamsInit["KM"], 30. };
-    }
+//    if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k5"] = { 0.1*fittedParamsInit["k5"], fittedParamsInit["k5"] };
+//    }
+//    if (dict_lower_upper_bounds.find("k6") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k6"] = { 0.01*fittedParamsInit["k6"], fittedParamsInit["k6"] };
+//    }
+//    if (dict_lower_upper_bounds.find("k7") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k7"] = { 0.01*fittedParamsInit["k7"], fittedParamsInit["k7"] };
+//    }
+//    if (dict_lower_upper_bounds.find("k8") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k8"] = { 0.01*fittedParamsInit["k8"], fittedParamsInit["k8"] };
+//    }
+//    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["KM"] = { fittedParamsInit["KM"], 30. };
+//    }
     //    // k4e, k5e, k8e, lam:
     //    if (dict_lower_upper_bounds.find("k4e") != dict_lower_upper_bounds.end()) {
     //        dict_lower_upper_bounds["k4e"] = { 0.000049, 0.00005 };
@@ -1294,7 +1294,9 @@ std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, 
     
     SetFittedParams_EDES_Ex_Med(type);
     
-    std::vector<std::string> chosenFittedParams_str = {"k1", "k2", "k4", "k5", "k6", "k7", "k8", "k9", "KM"};
+//    std::vector<std::string> chosenFittedParams_str = {"k1", "k2", "k4", "k5", "k6", "k7", "k8", "k9", "KM"};
+    
+    std::vector<std::string> chosenFittedParams_str = {"k6", "k7", "KM"};
     
     // obtain the initial fitted-params before fitting
     std::map<std::string, double> fittedParamsInit = eDES_ex_med.GetFittedParamsDict();
@@ -1309,29 +1311,32 @@ std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, 
         dict_lower_upper_bounds.insert({ chosenFittedParams_str[i], {lower_tmp, upper_tmp} });
     }
     // "k1", "k2", "k4", "k5", "k6", "k7", "k8", "k9"
-    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k1"] = { 0.01, 0.1 };
-    }
-    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k2"] = { 0.01, 1. };
-    }
-    if (dict_lower_upper_bounds.find("k4") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k4"] = { 0.001, 0.004 };
-    }
-    if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k5"] = { 0.001, 0.02 };
-    }
+//    if (dict_lower_upper_bounds.find("k1") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k1"] = { 0.01, 0.1 };
+//    }
+//    if (dict_lower_upper_bounds.find("k2") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k2"] = { 0.01, 1. };
+//    }
+//    if (dict_lower_upper_bounds.find("k4") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k4"] = { 0.001, 0.004 };
+//    }
+//    if (dict_lower_upper_bounds.find("k5") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k5"] = { 0.001, 0.02 };
+//    }
     if (dict_lower_upper_bounds.find("k6") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k6"] = { 0.05, 1. };
+        dict_lower_upper_bounds["k6"] = { 0.005, 1.5 };
     }
     if (dict_lower_upper_bounds.find("k7") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k7"] = { 0.01, 0.3 };
+        dict_lower_upper_bounds["k7"] = { 5E-6, 1.0 };
     }
-    if (dict_lower_upper_bounds.find("k8") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k8"] = { 0.1, 20 };
-    }
-    if (dict_lower_upper_bounds.find("k9") != dict_lower_upper_bounds.end()) {
-        dict_lower_upper_bounds["k9"] = { 0.005, 0.1 };
+//    if (dict_lower_upper_bounds.find("k8") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k8"] = { 0.1, 20 };
+//    }
+//    if (dict_lower_upper_bounds.find("k9") != dict_lower_upper_bounds.end()) {
+//        dict_lower_upper_bounds["k9"] = { 0.005, 0.1 };
+//    }
+    if (dict_lower_upper_bounds.find("KM") != dict_lower_upper_bounds.end()) {
+        dict_lower_upper_bounds["KM"] = { 5., 100. };
     }
     
     // set up the minimized params (gsl_vector) used in the gsl subroutine of minimization
@@ -1383,7 +1388,7 @@ std::tuple<double, std::map<std::string, double>, std::vector<std::pair<double, 
     double epsabs = num_data_pts * 2 * 0.5; // average fitting within about 0.5 sigma for all data points, '2' for both glucoses and insulins
     
     // check iteration: terminate if the results are converging
-    const int num_check_iter = 10; // num of iteration results to be averaged over
+    const int num_check_iter = 5; // num of iteration results to be averaged over
     double pcnt_curr = 1. / num_check_iter;
     double pcnt_prev = 1- pcnt_curr;
     double avg_check_iter_prev = 100000.;
@@ -1497,6 +1502,299 @@ std::vector<double> SubjectGlucose::ObtainCheckPtsFromDailyDataSets( const TypeD
     }
     return ret;
 }
+
+// ++++++++++++++++++++++++++++++   Methods for analyzing the glucose curve  ++++++++++++++++++++++++++++++
+
+std::tuple<double, double, double, std::vector<double>> SubjectGlucose::AnalyzeGlucoseCurve(const std::vector<std::pair<double, double>> &glucoses){
+    
+    if (glucoses.size() < 2) {
+        std::cout << "ERROR(SubjectGlucose::AnalyzeFourHourGlucose)" << std::endl;
+        throw std::runtime_error("ERROR(SubjectGlucose::AnalyzeFourHourGlucose)");
+    }
+    
+    // output: mean, amplitude, glu_range_time_pcnt(<3.9, 3.9-7.8, 7.8-10, >10.)
+    double AUC = 0.;
+    double min = 100., max = 0.;
+    double less_3P9 = 0., btn_3P9_7P8 = 0., btn_7p8_10 = 0., gtr_10 = 0.;
+    double timeInterval = glucoses[1].first - glucoses[0].first;
+    for (auto iter = glucoses.begin(); iter < glucoses.end()-1; ++iter) {
+        double glu_tmp = (iter->second + (iter+1)->second) / 2.;
+        AUC += glu_tmp * timeInterval;
+        if (glu_tmp < min) min = glu_tmp;
+        if (glu_tmp > max) max = glu_tmp;
+        if (glu_tmp <= 3.9) less_3P9 += timeInterval;
+        if (glu_tmp > 3.9 && glu_tmp <= 7.8) btn_3P9_7P8 += timeInterval;
+        if (glu_tmp > 7.8 && glu_tmp <= 10.) btn_7p8_10 += timeInterval;
+        if (glu_tmp > 10.) gtr_10 += timeInterval;
+    }
+    
+    auto total_time = (glucoses.size() - 1) * timeInterval;
+    double mean = AUC / total_time;
+    double amplitude = max - min;
+//    std::map<std::string, double> glu_range_time_pcnt = {
+//        {"<= 3.9 mmol/L", less_3P9 / total_time},
+//        {"3.9 - 7.8 mmol/L", btn_3P9_7P8 / total_time},
+//        {"7.8 - 10 mmol/L", btn_7p8_10 / total_time},
+//        {"> 10 mmol/L", gtr_10 / total_time}
+//    };
+    std::vector<double> glu_range_time_pcnt = {less_3P9 / total_time, btn_3P9_7P8 / total_time, btn_7p8_10 / total_time, gtr_10 / total_time};
+    
+    // HbA1c
+    double FBG = glucoses[0].second;
+    double mean_24h = (FBG * 12. +  mean * 12.) / 24.;
+    double HbA1c = (mean_24h + 0.582) / 1.198; // ref. 糖尿病防治指南
+    
+//    // GL
+//    double GL = (mean - FBG);
+    
+    return std::make_tuple(mean, HbA1c, amplitude, glu_range_time_pcnt);
+    
+}
+
+std::tuple<int, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>, std::vector<std::pair<double, double>>> SubjectGlucose::EvaluateSeverityFittedGlucoses(double bodyMass, double food, double glu_pre, const std::vector<std::pair<double, double>> &fitted_glucoses){
+    
+    std::map<std::string, double> modelParams_H = {
+        {"k1", 0.144307930814521826E-01},
+        {"k2", 0.379549420156179096E+01},
+        {"k3", 0.692175703520740747E-03},
+        {"k4", 0.202396936120216369E-02},
+        {"k5", 0.706987528575793098E-02},
+        {"k6", 0.113520049403267409E+01},
+        {"k7", 0.439296116630208511E+00},
+        {"k8", 0.341210766161778345E+01},
+        {"k9", 0.716506564790328065E-01},
+        {"k10", 0.05},
+        {"k11", 0},
+        {"sigma", 0.135575143777190310E+01},
+        {"KM", 0.131571530479106595E+02},
+        {"k4e", 0},
+        {"k5e", 10},
+        {"k6e", 0.05},
+        {"k8e", 0.5},
+        {"lam", 0.00833333}
+    };
+    
+    std::map<std::string, double> modelParams_GFT = {
+        {"k1", 0.144307930814521826E-01},
+        {"k2", 0.379549420156179096E+01},
+        {"k3", 0.692175703520740747E-03},
+        {"k4", 0.202396936120216369E-02},
+        {"k5", 0.624663357697790612E-02},
+        {"k6", 0.586344805285301973E+00},
+        {"k7", 0.176202986299337089E-01},
+        {"k8", 0.340429479929708823E+01},
+        {"k9", 0.716506564790328065E-01},
+        {"k10", 0.05},
+        {"k11", 0},
+        {"sigma", 0.135575143777190310E+01},
+        {"KM", 0.325326568142694939E+02},
+        {"k4e", 0},
+        {"k5e", 10},
+        {"k6e", 0.05},
+        {"k8e", 0.5},
+        {"lam", 0.00833333}
+    };
+    
+    std::map<std::string, double> modelParams_T2Light = {
+        {"k1", 0.144307930814521826E-01},
+        {"k2", 0.379549420156179096E+01},
+        {"k3", 0.692175703520740747E-03},
+        {"k4", 0.202396936120216369E-02},
+        {"k5", 0.616149969195030692E-02},
+        {"k6", 0.586133719919008533E+00},
+        {"k7", 0.131910649054100878E-01},
+        {"k8", 0.335281340038196740E+01},
+        {"k9", 0.716506564790328065E-01},
+        {"k10", 0.05},
+        {"k11", 0},
+        {"sigma", 0.135575143777190310E+01},
+        {"KM", 0.348813785020632423E+02},
+        {"k4e", 0},
+        {"k5e", 10},
+        {"k6e", 0.05},
+        {"k8e", 0.5},
+        {"lam", 0.00833333}
+    };
+    
+    std::map<std::string, double> modelParams_T2Mid = {
+        {"k1", 0.144307930814521826E-01},
+        {"k2", 0.379549420156179096E+01},
+        {"k3", 0.692175703520740747E-03},
+        {"k4", 0.202396936120216369E-02},
+        {"k5", 0.558564373452744272E-02},
+        {"k6", 0.355383834174836988E+00},
+        {"k7", 0.143221305922955957E-03},
+        {"k8", 0.335281340038196740E+01},
+        {"k9", 0.716506564790328065E-01},
+        {"k10", 0.05},
+        {"k11", 0},
+        {"sigma", 0.135575143777190310E+01},
+        {"KM", 0.545867398329898208E+02},
+        {"k4e", 0},
+        {"k5e", 10},
+        {"k6e", 0.05},
+        {"k8e", 0.5},
+        {"lam", 0.00833333}
+    };
+    
+    std::map<std::string, double> modelParams_T2Heavy = {
+        {"k1", 0.144307930814521826E-01},
+        {"k2", 0.379549420156179096E+01},
+        {"k3", 0.692175703520740747E-03},
+        {"k4", 0.202396936120216369E-02},
+        {"k5", 0.558440318801594650E-02},
+        {"k6", 0.120312241302089853E+00},
+        {"k7", 0.313625573849650083E-04},
+        {"k8", 0.335281340038196740E+01},
+        {"k9", 0.716506564790328065E-01},
+        {"k10", 0.05},
+        {"k11", 0},
+        {"sigma", 0.135575143777190310E+01},
+        {"KM", 0.546147125708596803E+02},
+        {"k4e", 0},
+        {"k5e", 10},
+        {"k6e", 0.05},
+        {"k8e", 0.5},
+        {"lam", 0.00833333}
+    };
+    
+    auto f_sz = fitted_glucoses.size();
+    double start_time = fitted_glucoses[0].first;
+    double final_time = fitted_glucoses[f_sz - 1].first;
+    double timeInterval = fitted_glucoses[1].first - fitted_glucoses[0].first;
+    
+    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2, bodyMass, glu_pre, 8., glu_pre, 8.);
+    
+    std::vector<std::pair<double, double>> foodIntakeEvents = {
+        {start_time, food},
+        {final_time, 0}
+    };
+    
+    std::vector<std::tuple<double, double, double, int>> exerciseEvents = { };
+    std::vector<std::tuple<double, int, double>> SAInsulinEvents = {};
+    std::vector<std::tuple<double, int, double>> LAInsulinEvents = {};
+    
+    SetSubjectSpecifics(subjectSpecifics);
+    SetFoodIntakeEvents(foodIntakeEvents);
+    SetExerciseEvents(exerciseEvents);
+    SetSaIEvents(SAInsulinEvents);
+    SetLaIEvents(LAInsulinEvents);
+    
+    // healthy
+    SetFittedParams_EDES_Ex_Med(modelParams_H);
+    EvolutionUnderFoodExInsulinEvents();
+    auto h_glucoses = ObtainGlucose(timeInterval);
+    
+    // GFT
+    SetFittedParams_EDES_Ex_Med(modelParams_GFT);
+    EvolutionUnderFoodExInsulinEvents();
+    auto GFT_glucoses = ObtainGlucose(timeInterval);
+    
+    // T2Light
+    SetFittedParams_EDES_Ex_Med(modelParams_T2Light);
+    EvolutionUnderFoodExInsulinEvents();
+    auto T2Light_glucoses = ObtainGlucose(timeInterval);
+    
+    // T2Mid
+    SetFittedParams_EDES_Ex_Med(modelParams_T2Mid);
+    EvolutionUnderFoodExInsulinEvents();
+    auto T2Mid_glucoses = ObtainGlucose(timeInterval);
+    
+    // T2Heavy
+    SetFittedParams_EDES_Ex_Med(modelParams_T2Heavy);
+    EvolutionUnderFoodExInsulinEvents();
+    auto T2Heavy_glucoses = ObtainGlucose(timeInterval);
+    
+    std::vector<double> closeness_glucoses;
+    closeness_glucoses.push_back(GlucosesCloseness(fitted_glucoses, h_glucoses));
+    closeness_glucoses.push_back(GlucosesCloseness(fitted_glucoses, GFT_glucoses));
+    closeness_glucoses.push_back(GlucosesCloseness(fitted_glucoses, T2Light_glucoses));
+    closeness_glucoses.push_back(GlucosesCloseness(fitted_glucoses, T2Mid_glucoses));
+    closeness_glucoses.push_back(GlucosesCloseness(fitted_glucoses, T2Heavy_glucoses));
+    
+    int min_type;
+    double min = 1E99;
+    for (int i = 0; i < closeness_glucoses.size(); ++i) {
+        if (min > closeness_glucoses[i]) {
+            min = closeness_glucoses[i];
+            min_type = i;
+        }
+    }
+    
+    auto ret = std::make_tuple(min_type, h_glucoses, GFT_glucoses, T2Light_glucoses, T2Mid_glucoses, T2Heavy_glucoses);
+    
+    return ret;
+}
+
+double SubjectGlucose::GlucosesCloseness(const std::vector<std::pair<double, double>> &fitted_glucoses, const std::vector<std::pair<double, double>> &standard_glucoses){
+    
+    double ret = 0.;
+    
+    // compute the SSR normailzed by the number of data points
+    auto sz = fitted_glucoses.size();
+    for (int i = 0; i < sz; ++i) {
+        ret += pow((fitted_glucoses[i].second - standard_glucoses[i].second), 2);
+    }
+    return ret / sz;
+}
+
+// ++++++++++++++++++++++++++++++   Methods for single meal evaluation  ++++++++++++++++++++++++++++++
+
+std::tuple<double, double, double, std::vector<std::pair<std::string, double>>, std::vector<std::pair<std::string, double>>, std::vector<SubjectGlucose::TypeGlucosesOutput>> SubjectGlucose::EvaluateSingleMeal_Glucose(const std::vector<std::pair<std::string, TypeFoodAttrs>> &foodInputLists, double bodyMass, double FBG, const std::map<std::string, double> &modelParams){
+    
+    TypeFoodAttrs foodTot = 0.;
+    for (auto iter = foodInputLists.begin(); iter != foodInputLists.end(); ++iter) foodTot += iter->second;
+    
+    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2, bodyMass, FBG, 8., FBG, 8.);
+    std::vector<std::tuple<double, double, double, int>> exerciseEvents = { };
+    std::vector<std::tuple<double, int, double>> SAInsulinEvents = {};
+    std::vector<std::tuple<double, int, double>> LAInsulinEvents = {};
+    
+    SetSubjectSpecifics(subjectSpecifics);
+    SetExerciseEvents(exerciseEvents);
+    SetSaIEvents(SAInsulinEvents);
+    SetLaIEvents(LAInsulinEvents);
+    SetFittedParams_EDES_Ex_Med(modelParams);
+    
+    double start_time = 0., final_time = 4*60.;
+    double timeInterval = 5.;
+    
+    // all food
+    std::vector<std::pair<double, double>> foodIntakeEvents_tmp = { {start_time, foodTot}, {final_time, 0} };
+    SetFoodIntakeEvents(foodIntakeEvents_tmp);
+    EvolutionUnderFoodExInsulinEvents();
+    auto glucoses_allFood = ObtainGlucose(timeInterval);
+    auto analysisRes_glu_allFood = AnalyzeGlucoseCurve(glucoses_allFood);
+    auto mean = std::get<0>(analysisRes_glu_allFood);
+    auto amplitude = std::get<1>(analysisRes_glu_allFood);
+    auto PBG2h = glucoses_allFood[glucoses_allFood.size()/2].second;
+    
+    // loop over each food
+    std::vector<std::pair<std::string, double>> mean_foods, amplitude_foods;
+    std::vector<TypeGlucosesOutput> glucoses_food_collection;
+    for (int i = 0; i < foodInputLists.size(); ++i) {
+        foodIntakeEvents_tmp = { {start_time, foodInputLists[i].second}, {final_time, 0} };
+        SetFoodIntakeEvents(foodIntakeEvents_tmp);
+        EvolutionUnderFoodExInsulinEvents();
+        auto glucoses_food = ObtainGlucose(timeInterval);
+        auto analysisRes_glu_food = AnalyzeGlucoseCurve(glucoses_food);
+        mean_foods.push_back(std::make_pair(foodInputLists[i].first, std::get<0>(analysisRes_glu_food)));
+        amplitude_foods.push_back(std::make_pair(foodInputLists[i].first, std::get<1>(analysisRes_glu_food)));
+        glucoses_food_collection.push_back(glucoses_food);
+    }
+    
+    // sort mean_foods and amplitude_foods
+    std::sort(mean_foods.begin(), mean_foods.end(), [](const std::pair<std::string, double> &a,
+                                                       const std::pair<std::string, double> &b) { return a.second > b.second;});
+    std::sort(amplitude_foods.begin(), amplitude_foods.end(), [](const std::pair<std::string, double> &a,
+                                                       const std::pair<std::string, double> &b) { return a.second > b.second;});
+    
+    auto ret = std::make_tuple(mean, amplitude, PBG2h, mean_foods, amplitude_foods, glucoses_food_collection);
+    
+    return ret;
+    
+}
+
 
 // ++++++++++++++++++++++++++++++   Methods for class itself  ++++++++++++++++++++++++++++++
 

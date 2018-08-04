@@ -40,27 +40,27 @@ int main(int argc, const char * argv[]) {
 //    double Ipl_basal = 8.;
 
     
-    int type = 2;
-    double bodyMass = 83.; // unit: kg
-    double fastGlucose = 6.; // unit: mmol/L
-    double fastInsulin = 8.; // unit: mU/L
-    double Gpl_basal = 6.;
-    double Ipl_basal = 8.;
+//    int type = 2;
+//    double bodyMass = 83.; // unit: kg
+//    double fastGlucose = 6.; // unit: mmol/L
+//    double fastInsulin = 8.; // unit: mU/L
+//    double Gpl_basal = 6.;
+//    double Ipl_basal = 8.;
     
-    // Food intake events:
-    // format: <t_eat, foodIntake>
-    std::vector<std::pair<double, double>> foodIntakeEvents = {
-        {7*60., 75E3},     // breakfast, eg., 7 am
-        {13*60., 75E3},   // lunch, eg., 1 pm
-        {19*60., 75E3},   // dinner, eg., 7 pm
-//        {23*60., 20E3},      // midnight snack, eg. 11 pm
-        {31*60., 0}       // the next morning at 7 am
-    };
-    
+//    // Food intake events:
+//    // format: <t_eat, foodIntake>
 //    std::vector<std::pair<double, double>> foodIntakeEvents = {
-//        {0., 75E3},
-//        {6*60., 0}
+//        {7*60., 75E3},     // breakfast, eg., 7 am
+//        {13*60., 75E3},   // lunch, eg., 1 pm
+//        {19*60., 75E3},   // dinner, eg., 7 pm
+////        {23*60., 20E3},      // midnight snack, eg. 11 pm
+//        {31*60., 0}       // the next morning at 7 am
 //    };
+    
+    std::vector<std::pair<double, double>> foodIntakeEvents = {
+        {0., 75E3},
+        {6*60., 0}
+    };
     
     // Exercise events:
     // format: <t_start, t_finish, ex_intensity, ex_type>
@@ -84,8 +84,51 @@ int main(int argc, const char * argv[]) {
     };
     
     // set up subject specifics and its daily activities
-    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(type, bodyMass, fastGlucose, fastInsulin, Gpl_basal, Ipl_basal);
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(type, bodyMass, fastGlucose, fastInsulin, Gpl_basal, Ipl_basal);
+    
+//    // health
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(0 , 75., 5., 8., 5., 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_h.dat";
+    
+//    // GFT
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 6.4, 8., 6.4, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_GFT.dat";
+    
+//    // T2Light
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 6.84, 8., 6.84, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Light.dat";
+    
+//    // T2Mid
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 8., 8., 8., 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Mid.dat";
+    
+//    // T2Heavy
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 9.15, 8., 9.15, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Heavy.dat";
+    
+    // EDES health
+    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(0 , 75., 5., 8., 5., 8.);
+    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_EDES_multinest_h.dat";
+    
+//    // EDES GFT
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 6.4, 8., 6.4, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_GFT.dat";
+    
+//    // EDES T2Light
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 6.84, 8., 6.84, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Light.dat";
+    
+//    // EDES T2Mid
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 8., 8., 8., 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Mid.dat";
+    
+//    // EDES T2Heavy
+//    std::tuple<int, double, double, double, double, double> subjectSpecifics = std::make_tuple(2 , 83.3, 9.15, 8., 9.15, 8.);
+//    std::string fitted_params_file = "/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/fitted_params/optimized_fitted_params_report_multinest_T2Heavy.dat";
+
+    
     subject.SetSubjectSpecifics(subjectSpecifics);
+    subject.SetFittedParams_EDES_Ex_Med(fitted_params_file);
     subject.SetFoodIntakeEvents(foodIntakeEvents);
     subject.SetExerciseEvents(exerciseEvents);
     subject.SetSaIEvents(SAInsulinEvents);
@@ -109,9 +152,17 @@ int main(int argc, const char * argv[]) {
     output.open(output_file_path + "output.dat", ofstream::out);
     for (auto glucose: glucoses) {
         cout << glucose.first / 60.   << " " << glucose.second << endl;
-        output << glucose.first /60. << " " << glucose.second << endl;
+        output << glucose.first  << " " << glucose.second << endl;
     }
     output.close();
+    
+    auto res = subject.AnalyzeGlucoseCurve(glucoses);
+    cout << "Mean: " << get<0>(res) << endl;
+    cout << "HbA1c: " << get<1>(res) << endl;
+    cout << "Amplitude: " << get<2>(res) << endl;
+    for (auto pct: get<3>(res)) {
+        cout << pct << endl;
+    }
     
     finish = clock();
     cout << "elapsed time (sec): " << (double) (finish - start)/CLOCKS_PER_SEC << endl;

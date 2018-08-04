@@ -160,8 +160,10 @@ private:
     double t_int = 30.;
     double tau_d = 3.;
     double c1 = 0.1;
-    double c2 = 0.198788; // (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
-    double c3 = 0.000198892; // (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
+//    double c2 = 0.198788; // (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
+//    double c3 = 0.000198892; // (optimized 7/19/2018, based on Fig.14 of Mass' thesis)
+    double c2 = 0.156152; // (optimized 8/2/2018, based on the literature data in EDES paper, using multinest)
+    double c3 = 0.00885685; // (optimized 8/2/2018, based on the literature data in EDES paper, using multinest)
     //      long-acting insulin (depending on the brand)
     double h_prev = 1.79;   // Levemir
     double a_prev = 2.88E-3;

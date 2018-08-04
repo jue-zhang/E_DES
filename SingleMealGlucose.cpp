@@ -29,8 +29,11 @@ int main(int argc, const char * argv[]) {
     SubjectGlucose sGlucose;
     int type = 2;
     double bodyMass = 83.;
-    double glu_pre = 8.;
-    double glu_post = 12.;
+//    double glu_pre = 6.5, glu_post = 9.; // GFT
+//    double glu_pre = 7., glu_post = 9.5; // T2Light
+//    double glu_pre = 8., glu_post = 12.; // T2Mid
+//    double glu_pre = 9., glu_post = 15.; // T2Heavy
+    double glu_pre = 8.5, glu_post = 13.; // arbitrary
     double glu_post_time = 120.;
     double food = 75E3;
     double timeInterval = 5.;
@@ -39,6 +42,50 @@ int main(int argc, const char * argv[]) {
     auto SSR = get<0>(res);
     auto fitted_params = get<1>(res);
     auto glucoses = get<2>(res);
+    
+    cout << "SSR: " << SSR << endl;
+    
+    
+    // evaluating the severity of glucose levels
+    auto evaluation = sGlucose.EvaluateSeverityFittedGlucoses(bodyMass, food, glu_pre, glucoses);
+    cout << "The paitent is likely to be : " << get<0>(evaluation) << endl;
+    
+    ofstream std_glu_output;
+    // healthy
+    auto std_glucoses = get<1>(evaluation);
+    std_glu_output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/output_h.dat", ofstream::out);
+    for (auto glucose: std_glucoses) {
+        std_glu_output << glucose.first  << " " << glucose.second << endl;
+    }
+    std_glu_output.close();
+    // GFT
+    std_glucoses = get<2>(evaluation);
+    std_glu_output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/output_GFT.dat", ofstream::out);
+    for (auto glucose: std_glucoses) {
+        std_glu_output << glucose.first  << " " << glucose.second << endl;
+    }
+    std_glu_output.close();
+    // T2Light
+    std_glucoses = get<3>(evaluation);
+    std_glu_output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/output_T2Light.dat", ofstream::out);
+    for (auto glucose: std_glucoses) {
+        std_glu_output << glucose.first  << " " << glucose.second << endl;
+    }
+    std_glu_output.close();
+    // T2Mid
+    std_glucoses = get<4>(evaluation);
+    std_glu_output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/output_T2Mid.dat", ofstream::out);
+    for (auto glucose: std_glucoses) {
+        std_glu_output << glucose.first  << " " << glucose.second << endl;
+    }
+    std_glu_output.close();
+    // T2Heavy
+    std_glucoses = get<5>(evaluation);
+    std_glu_output.open("/Users/Jue/Desktop/precision_health/models/E_DES/E_DES/output/output_T2Heavy.dat", ofstream::out);
+    for (auto glucose: std_glucoses) {
+        std_glu_output << glucose.first  << " " << glucose.second << endl;
+    }
+    std_glu_output.close();
     
     
     ofstream output;
@@ -62,7 +109,26 @@ int main(int argc, const char * argv[]) {
     }
     output.close();
     
-    cout << "SSR: " << SSR << endl;
+    
+    cout << "single meal evaluation...." << endl;
+    std::vector<std::pair<std::string, double>> foodInputLists = {
+        {"foodA", 65E3},
+        {"foodB", 10E3}
+    };
+    auto singleMealEvaluation = sGlucose.EvaluateSingleMeal_Glucose(foodInputLists, bodyMass, glu_pre, fitted_params);
+    cout << "mean = " << get<0>(singleMealEvaluation) << endl;
+    cout << "amplitude = " << get<1>(singleMealEvaluation) << endl;
+    cout << "PBG2h = " << get<2>(singleMealEvaluation) << endl;
+    cout << "food ordered by mean: " << endl;
+    auto orderedFoodList_mean = get<3>(singleMealEvaluation);
+    for (auto food_: orderedFoodList_mean) {
+        cout << food_.first << " " << food_.second << endl;
+    }
+    cout << "food ordered by amp: " << endl;
+    auto orderedFoodList_amp = get<4>(singleMealEvaluation);
+    for (auto food_: orderedFoodList_amp) {
+        cout << food_.first << " " << food_.second << endl;
+    }
     
     
     finish = clock();
